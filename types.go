@@ -88,7 +88,14 @@ func handle_ExistingFile(area *qt.QFormLayout, typ reflect.Type, tag reflect.Str
 		rline.SetText(useInit)
 	}
 
-	browseBtn := qt.NewQPushButton3("Browse...") // TODO document-open
+	browseBtn := qt.NewQPushButton2()
+	if qt.QIcon_HasThemeIcon("document-open") {
+		browseBtn.SetIcon(qt.QIcon_FromTheme("document-open"))
+		browseBtn.SetToolTip("Browse...")
+	} else {
+		browseBtn.SetText("Browse...")
+	}
+
 	hbox.AddWidget(browseBtn.QWidget)
 
 	filter := "All files (*.*)"
@@ -125,7 +132,13 @@ func handle_ExistingDirectory(area *qt.QFormLayout, typ reflect.Type, tag reflec
 		rline.SetText(useInit)
 	}
 
-	browseBtn := qt.NewQPushButton3("Browse...") // TODO folder-open
+	browseBtn := qt.NewQPushButton2()
+	if qt.QIcon_HasThemeIcon("folder-open") {
+		browseBtn.SetIcon(qt.QIcon_FromTheme("folder-open"))
+		browseBtn.SetToolTip("Browse...")
+	} else {
+		browseBtn.SetText("Browse...")
+	}
 	hbox.AddWidget(browseBtn.QWidget)
 
 	browseBtn.OnClicked(func() {

@@ -17,6 +17,10 @@ func TestAutoConfig(t *testing.T) {
 
 	type testStruct struct {
 		Foo            string
+		A_File         ExistingFile
+		A_Dir          ExistingDirectory
+		Hostname       AddressPort
+		Readonly       bool
 		Something_Else *testInnerStruct
 	}
 
