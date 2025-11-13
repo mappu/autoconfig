@@ -38,15 +38,15 @@ func assignInterfaceStructField(target ConfigurableStruct, fieldId int, cb func(
 }
 
 // MakeConfigArea makes a config area by pushing elements into a QFormLayout.
-// Supported types:
-// - string, bool, AddressPort, ExistingFile, Password
-//
-// It supports the struct tags:
-// - ylabel    Override label. Otherwise, use field name
-// - yinit     default string value
-// - yfilter   For "ExistingFile"; filter to apply in popup dialog
-// - yport     For ”AddressPort"
 func MakeConfigArea(ct ConfigurableStruct, area *qt.QFormLayout) func() ConfigurableStruct {
+
+	obj := reflect.TypeOf(ct).Elem()
+
+	return makeConfigAreaFor(obj, area)
+}
+
+// MakeConfigArea makes a config area by pushing elements into a QFormLayout.
+func makeConfigAreaFor(obj reflect.Type, area *qt.QFormLayout) func() ConfigurableStruct {
 
 	makeAssigner := func(fieldId int, cb func(*reflect.Value)) func(ConfigurableStruct) {
 		return func(target ConfigurableStruct) {
@@ -55,8 +55,6 @@ func MakeConfigArea(ct ConfigurableStruct, area *qt.QFormLayout) func() Configur
 	}
 
 	var onApply []func(ConfigurableStruct)
-
-	obj := reflect.TypeOf(ct).Elem()
 
 	nf := obj.NumField()
 	for i := 0; i < nf; i++ {
@@ -73,6 +71,11 @@ func MakeConfigArea(ct ConfigurableStruct, area *qt.QFormLayout) func() Configur
 		}
 
 		widgetType := ff.Type.Name()
+
+		// Maybe it is a struct pointer? If so, consider it an optional child dialog
+		if ff.Type.Kind() == reflect.Pointer && ff.Type.Elem().Kind() == reflect.Struct {
+			widgetType = "__childStruct"
+		}
 
 		switch widgetType {
 		case "bool":
@@ -186,6 +189,40 @@ func MakeConfigArea(ct ConfigurableStruct, area *qt.QFormLayout) func() Configur
 			hboxWidget.SetLayout(hbox.QLayout)
 			area.AddRow3(label+`:`, hboxWidget)
 
+		case "__childStruct":
+			hbox := qt.NewQHBoxLayout2()
+			hbox.SetContentsMargins(0, 0, 0, 0)
+
+			statusField := qt.NewQLabel2()
+			statusField.SetText("Not configured")
+			statusField.SetSizePolicy2(qt.QSizePolicy__Expanding, qt.QSizePolicy__Maximum)
+			hbox.AddWidget(statusField.QWidget)
+
+			configBtn := qt.NewQToolButton2()
+			configBtn.SetText("Edit...")
+			configBtn.OnClicked(func() {
+
+				// Allocate a temporary variable with type of the struct.
+				//    v.Elem() is the value contained in the interface.
+
+				openDialogFor(ff.Type.Elem(), configBtn.QWidget, label, func(childThing ConfigurableStruct) {
+					// ...
+				})
+			})
+			hbox.AddWidget(configBtn.QWidget)
+
+			clearBtn := qt.NewQToolButton2()
+			clearBtn.SetText("\u00d7") // &times; ×
+			hbox.AddWidget(clearBtn.QWidget)
+
+			onApply = append(onApply, makeAssigner(i, func(rv *reflect.Value) {
+				// ...
+			}))
+
+			hboxWidget := qt.NewQWidget2()
+			hboxWidget.SetLayout(hbox.QLayout)
+			area.AddRow3(label+`:`, hboxWidget)
+
 		default:
 			panic("makeConfigArea missing handling for type=" + widgetType)
 		}
@@ -194,7 +231,9 @@ func MakeConfigArea(ct ConfigurableStruct, area *qt.QFormLayout) func() Configur
 
 	getter := func() ConfigurableStruct {
 
-		// TODO Get a zero-valued version of the struct to start with
+		// Get a zero-valued version of the struct to start with
+		var ct ConfigurableStruct = reflect.New(obj).Interface().(ConfigurableStruct)
+
 		for _, fn := range onApply {
 			fn(ct)
 		}

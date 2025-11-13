@@ -11,8 +11,13 @@ func TestAutoConfig(t *testing.T) {
 
 	qt.NewQApplication([]string{"test"})
 
+	type testInnerStruct struct {
+		Bar bool
+	}
+
 	type testStruct struct {
-		Foo string
+		Foo            string
+		Something_Else *testInnerStruct
 	}
 
 	var myVar testStruct
