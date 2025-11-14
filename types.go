@@ -16,6 +16,8 @@ type AddressPort struct {
 	Port    int
 }
 
+type MultiLineString string
+
 type ExistingFile string
 
 type ExistingDirectory string
@@ -54,6 +56,16 @@ func handle_string(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTa
 	area.AddRow3(label+`:`, rline.QWidget)
 	return func() {
 		rv.SetString(rline.Text())
+	}
+}
+
+func handle_MultiLineString(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
+	rline := qt.NewQTextEdit2()
+	rline.SetPlainText(rv.String())
+	rline.SetAcceptRichText(false)
+	area.AddRow3(label+`:`, rline.QWidget)
+	return func() {
+		rv.SetString(rline.ToPlainText())
 	}
 }
 
@@ -258,6 +270,7 @@ func init() {
 	registeredTypes = map[string]typeHandler{
 		"bool":              handle_bool,
 		"string":            handle_string,
+		"MultiLineString":   handle_MultiLineString,
 		"Password":          handle_Password,
 		"EnumList":          handle_EnumList,
 		"ExistingFile":      handle_ExistingFile,
