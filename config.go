@@ -43,14 +43,12 @@ func MakeConfigArea(ct ConfigurableStruct, area *qt.QFormLayout) func() Configur
 	return makeConfigAreaFor(obj, area)
 }
 
+type StructInterface interface {
+	~struct{}
+}
+
 // MakeConfigArea makes a config area by pushing elements into a QFormLayout.
 func makeConfigAreaFor(obj reflect.Type, area *qt.QFormLayout) func() ConfigurableStruct {
-
-	makeAssigner := func(fieldId int, cb func(*reflect.Value)) func(ConfigurableStruct) {
-		return func(target ConfigurableStruct) {
-			assignInterfaceStructField(target, fieldId, cb)
-		}
-	}
 
 	var onApply []func(ConfigurableStruct)
 
@@ -82,7 +80,9 @@ func makeConfigAreaFor(obj reflect.Type, area *qt.QFormLayout) func() Configurab
 
 		singleFieldSaver := handler(area, ff.Type, ff.Tag, label)
 
-		onApply = append(onApply, makeAssigner(i, singleFieldSaver))
+		onApply = append(onApply, func(target ConfigurableStruct) {
+			assignInterfaceStructField(target, i, singleFieldSaver)
+		})
 
 	}
 

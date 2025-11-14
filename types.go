@@ -1,6 +1,7 @@
 package autoconfig
 
 import (
+	"log"
 	"path/filepath"
 	"reflect"
 	"strconv"
@@ -194,6 +195,12 @@ func handle_ChildStructPtr(area *qt.QFormLayout, typ reflect.Type, tag reflect.S
 
 	// Allocate a temporary variable with type of the struct.
 	wipValue := reflect.New(typ.Elem()) // struct itself, not pointer
+	isAllocated := false
+	// But then new'ing it has given us a pointer again
+
+	log.Printf("wipValue type = %q", wipValue.Type().String())
+	log.Printf("wipValue.Elem() type = %q", wipValue.Elem().Type().String())
+	wipValue.Elem().Field(0).SetBool(true)
 
 	hbox := qt.NewQHBoxLayout2()
 	hbox.SetContentsMargins(0, 0, 0, 0)
@@ -214,12 +221,16 @@ func handle_ChildStructPtr(area *qt.QFormLayout, typ reflect.Type, tag reflect.S
 
 		openDialogFor(typ.Elem(), configBtn.QWidget, label, func(childThing ConfigurableStruct) {
 			if childThing == nil {
-				// ???
+				// Cancelled, do not modify our current wipValue
+
 			} else {
 				// childThing is interface
 				iface := reflect.ValueOf(childThing)
-				//ptrtostruct := iface.Elem()
-				wipValue.Set(iface.Elem())
+
+				wipValue.Elem().Set(iface.Elem())
+
+				statusField.SetText("Configured")
+				isAllocated = true
 			}
 		})
 	})
@@ -232,6 +243,10 @@ func handle_ChildStructPtr(area *qt.QFormLayout, typ reflect.Type, tag reflect.S
 		clearBtn.SetText("\u00d7") // &times; ×
 	}
 	clearBtn.SetToolTip("Clear")
+	clearBtn.OnClicked(func() {
+		statusField.SetText("Not configured")
+		isAllocated = false
+	})
 	hbox.AddWidget(clearBtn.QWidget)
 
 	hboxWidget := qt.NewQWidget2()
@@ -239,10 +254,9 @@ func handle_ChildStructPtr(area *qt.QFormLayout, typ reflect.Type, tag reflect.S
 	area.AddRow3(label+`:`, hboxWidget)
 
 	return func(rv *reflect.Value) {
-		// rv should be a pointer-to-struct, but our 'wipValue' is struct itself
-		// Create a new pointer-to-struct value
-		// TODO not sure if this works??
-		// rv.Elem().Set(wipValue)
+		if isAllocated {
+			rv.Set(wipValue)
+		}
 	}
 }
 
