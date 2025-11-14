@@ -24,6 +24,12 @@ type Password string
 
 type EnumList int
 
+// InitDefaulter is a type that can reset itself to default values.
+// It's used if autoconfig needs to initialize a child struct.
+type InitDefaulter interface {
+	InitDefaults()
+}
+
 type saveHandler func()
 
 type typeHandler func(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) saveHandler
@@ -208,6 +214,10 @@ func handle_ChildStructPtr(area *qt.QFormLayout, rv *reflect.Value, tag reflect.
 		// Allocate our rv to be something if it's nothing
 		if rv.IsNil() {
 			rv.Set(reflect.New(rv.Type().Elem()))
+
+			if defaulter, ok := rv.Interface().(InitDefaulter); ok {
+				defaulter.InitDefaults()
+			}
 		}
 
 		refreshLabel()
