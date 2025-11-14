@@ -99,7 +99,7 @@ func handle_ExistingFile(area *qt.QFormLayout, rv *reflect.Value, tag reflect.St
 
 	hbox.AddWidget(browseBtn.QWidget)
 
-	filter := "All files (*.*)"
+	filter := "All files (*)"
 	if useFilter, ok := tag.Lookup("yfilter"); ok {
 		filter = useFilter
 	}
