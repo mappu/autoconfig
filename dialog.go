@@ -1,25 +1,13 @@
 package autoconfig
 
 import (
-	"reflect"
-
 	qt "github.com/mappu/miqt/qt6"
 )
 
 // OpenDialog opens the struct for editing in a new modal dialog in the current
 // global event loop.
 // The onFinished callback receives nil on cancel.
-func OpenDialog(ct ConfigurableStruct, parent *qt.QWidget, title string, onFinished func(ConfigurableStruct)) {
-
-	obj := reflect.TypeOf(ct).Elem()
-
-	openDialogFor(obj, parent, title, onFinished)
-}
-
-// OpenDialog opens the struct for editing in a new modal dialog in the current
-// global event loop.
-// The onFinished callback receives nil on cancel.
-func openDialogFor(obj reflect.Type, parent *qt.QWidget, title string, onFinished func(ConfigurableStruct)) {
+func OpenDialog(ct ConfigurableStruct, parent *qt.QWidget, title string, onFinished func()) {
 
 	dlg := qt.NewQDialog(parent)
 	dlg.SetModal(true)
@@ -41,22 +29,18 @@ func openDialogFor(obj reflect.Type, parent *qt.QWidget, title string, onFinishe
 	formArea.SetContentsMargins(0, 0, 0, 0)
 	formArea.SetSpacing(6)
 	vbox.AddLayout(formArea.QLayout)
-	applyer := makeConfigAreaFor(obj, formArea)
+	applyer := MakeConfigArea(ct, formArea)
 
 	buttons := qt.NewQDialogButtonBox(dlg.QWidget)
-	buttons.SetStandardButtons(qt.QDialogButtonBox__Ok | qt.QDialogButtonBox__Cancel)
+	buttons.SetStandardButtons(qt.QDialogButtonBox__Ok)
 	buttons.OnAccepted(dlg.Accept)
 	buttons.OnRejected(dlg.Reject)
 	vbox.AddWidget(buttons.QWidget)
 
 	dlg.OnFinished(func(status int) {
-		if status != int(qt.QDialog__Accepted) {
-			onFinished(nil)
-			return
-		}
-
-		updatedStruct := applyer()
-		onFinished(updatedStruct)
+		// Save changes regardless of status
+		applyer()
+		onFinished()
 	})
 
 	dlg.Show()

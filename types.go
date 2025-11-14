@@ -1,10 +1,9 @@
 package autoconfig
 
 import (
-	"log"
+	"fmt"
 	"path/filepath"
 	"reflect"
-	"strconv"
 	"strings"
 
 	qt "github.com/mappu/miqt/qt6"
@@ -25,69 +24,64 @@ type Password string
 
 type EnumList int
 
-type saveHandler func(rv *reflect.Value)
+type saveHandler func()
 
-type typeHandler func(area *qt.QFormLayout, typ reflect.Type, tag reflect.StructTag, label string) saveHandler
+type typeHandler func(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) saveHandler
 
 var (
 	registeredTypes map[string]typeHandler
 )
 
-func handle_bool(area *qt.QFormLayout, typ reflect.Type, tag reflect.StructTag, label string) saveHandler {
+func handle_bool(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) saveHandler {
 	rbtn := qt.NewQCheckBox3(label)
+	rbtn.SetChecked(rv.Bool())
 	area.AddRow3("", rbtn.QWidget)
 
-	return func(rv *reflect.Value) {
+	return func() {
 		rv.SetBool(rbtn.IsChecked())
 	}
 }
 
-func handle_string(area *qt.QFormLayout, typ reflect.Type, tag reflect.StructTag, label string) saveHandler {
+func handle_string(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) saveHandler {
 	rline := qt.NewQLineEdit2()
-	if useInit, ok := tag.Lookup("yinit"); ok {
-		rline.SetText(useInit)
-	}
+	rline.SetText(rv.String())
 	area.AddRow3(label+`:`, rline.QWidget)
-	return func(rv *reflect.Value) {
+	return func() {
 		rv.SetString(rline.Text())
 	}
 }
 
-func handle_Password(area *qt.QFormLayout, typ reflect.Type, tag reflect.StructTag, label string) saveHandler {
+func handle_Password(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) saveHandler {
 	rline := qt.NewQLineEdit2()
 	rline.SetEchoMode(qt.QLineEdit__Password)
-	if useInit, ok := tag.Lookup("yinit"); ok {
-		rline.SetText(useInit)
-	}
+	rline.SetText(rv.String())
 	area.AddRow3(label+`:`, rline.QWidget)
-	return func(rv *reflect.Value) {
+	return func() {
 		rv.SetString(rline.Text())
 	}
 }
 
-func handle_EnumList(area *qt.QFormLayout, typ reflect.Type, tag reflect.StructTag, label string) saveHandler {
+func handle_EnumList(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) saveHandler {
 	enumOpts, _ := tag.Lookup("yenum")
 
 	rcombo := qt.NewQComboBox2()
 	rcombo.AddItems(strings.Split(enumOpts, `;;`)) // Same separator as Qt filter (yfilter)
+	rcombo.SetCurrentIndex(int(rv.Int()))
 
 	area.AddRow3(label+`:`, rcombo.QWidget)
 
-	return func(rv *reflect.Value) {
+	return func() {
 		rv.SetInt(int64(rcombo.CurrentIndex()))
 	}
 }
 
-func handle_ExistingFile(area *qt.QFormLayout, typ reflect.Type, tag reflect.StructTag, label string) saveHandler {
+func handle_ExistingFile(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) saveHandler {
 	hbox := qt.NewQHBoxLayout2()
 	hbox.SetContentsMargins(0, 0, 0, 0)
 
 	rline := qt.NewQLineEdit2()
+	rline.SetText(rv.String())
 	hbox.AddWidget(rline.QWidget)
-
-	if useInit, ok := tag.Lookup("yinit"); ok {
-		rline.SetText(useInit)
-	}
 
 	browseBtn := qt.NewQPushButton2()
 	if qt.QIcon_HasThemeIcon("document-open") {
@@ -117,21 +111,18 @@ func handle_ExistingFile(area *qt.QFormLayout, typ reflect.Type, tag reflect.Str
 	hboxWidget.SetLayout(hbox.QLayout)
 	area.AddRow3(label+`:`, hboxWidget)
 
-	return func(rv *reflect.Value) {
+	return func() {
 		rv.SetString(rline.Text())
 	}
 }
 
-func handle_ExistingDirectory(area *qt.QFormLayout, typ reflect.Type, tag reflect.StructTag, label string) saveHandler {
+func handle_ExistingDirectory(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) saveHandler {
 	hbox := qt.NewQHBoxLayout2()
 	hbox.SetContentsMargins(0, 0, 0, 0)
 
 	rline := qt.NewQLineEdit2()
+	rline.SetText(rv.String())
 	hbox.AddWidget(rline.QWidget)
-
-	if useInit, ok := tag.Lookup("yinit"); ok {
-		rline.SetText(useInit)
-	}
 
 	browseBtn := qt.NewQPushButton2()
 	if qt.QIcon_HasThemeIcon("folder-open") {
@@ -153,62 +144,57 @@ func handle_ExistingDirectory(area *qt.QFormLayout, typ reflect.Type, tag reflec
 	hboxWidget.SetLayout(hbox.QLayout)
 	area.AddRow3(label+`:`, hboxWidget)
 
-	return func(rv *reflect.Value) {
+	return func() {
 		rv.SetString(rline.Text())
 	}
 }
 
-func handle_AddressPort(area *qt.QFormLayout, typ reflect.Type, tag reflect.StructTag, label string) saveHandler {
+func handle_AddressPort(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) saveHandler {
 	hbox := qt.NewQHBoxLayout2()
 	hbox.SetContentsMargins(0, 0, 0, 0)
 
 	addr := qt.NewQLineEdit2()
+	addr.SetText(rv.Field(0).String()) // Address
 	hbox.AddWidget(addr.QWidget)
 
 	separator := qt.NewQLabel3(`:`)
 	hbox.AddWidget(separator.QWidget)
 
 	port := qt.NewQSpinBox2()
-	hbox.AddWidget(port.QWidget)
 	port.SetMinimum(0)
 	port.SetMaximum(65535)
-
-	if defaultVal, ok := tag.Lookup(`yport`); ok {
-		defaultValInt, err := strconv.Atoi(defaultVal)
-		if err != nil {
-			panic(err)
-		}
-		port.SetValue(defaultValInt)
-	}
+	port.SetValue(int(rv.Field(1).Int())) // Port
+	hbox.AddWidget(port.QWidget)
 
 	hboxWidget := qt.NewQWidget2()
 	hboxWidget.SetLayout(hbox.QLayout)
 	area.AddRow3(label+`:`, hboxWidget)
 
-	return func(rv *reflect.Value) {
+	return func() {
 		newVal := AddressPort{Address: addr.Text(), Port: port.Value()}
 		rv.Set(reflect.ValueOf(newVal))
 	}
 }
 
-func handle_ChildStructPtr(area *qt.QFormLayout, typ reflect.Type, tag reflect.StructTag, label string) saveHandler {
-
-	// Allocate a temporary variable with type of the struct.
-	wipValue := reflect.New(typ.Elem()) // struct itself, not pointer
-	isAllocated := false
-	// But then new'ing it has given us a pointer again
-
-	log.Printf("wipValue type = %q", wipValue.Type().String())
-	log.Printf("wipValue.Elem() type = %q", wipValue.Elem().Type().String())
-	wipValue.Elem().Field(0).SetBool(true)
+func handle_ChildStructPtr(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) saveHandler {
 
 	hbox := qt.NewQHBoxLayout2()
 	hbox.SetContentsMargins(0, 0, 0, 0)
 
 	statusField := qt.NewQLabel2()
-	statusField.SetText("Not configured")
 	statusField.SetSizePolicy2(qt.QSizePolicy__Expanding, qt.QSizePolicy__Maximum)
 	hbox.AddWidget(statusField.QWidget)
+
+	refreshLabel := func() {
+		if rv.IsNil() {
+			statusField.SetText("Not configured")
+		} else if stringer, ok := rv.Interface().(fmt.Stringer); ok {
+			statusField.SetText(stringer.String())
+		} else {
+			statusField.SetText("Configured")
+		}
+	}
+	refreshLabel()
 
 	configBtn := qt.NewQToolButton2()
 	if qt.QIcon_HasThemeIcon("edit-symbolic") {
@@ -219,19 +205,17 @@ func handle_ChildStructPtr(area *qt.QFormLayout, typ reflect.Type, tag reflect.S
 	}
 	configBtn.OnClicked(func() {
 
-		openDialogFor(typ.Elem(), configBtn.QWidget, label, func(childThing ConfigurableStruct) {
-			if childThing == nil {
-				// Cancelled, do not modify our current wipValue
+		// Allocate our rv to be something if it's nothing
+		if rv.IsNil() {
+			rv.Set(reflect.New(rv.Type().Elem()))
+		}
 
-			} else {
-				// childThing is interface
-				iface := reflect.ValueOf(childThing)
+		refreshLabel()
 
-				wipValue.Elem().Set(iface.Elem())
-
-				statusField.SetText("Configured")
-				isAllocated = true
-			}
+		// Let OpenDialog mutate our new wipValue struct's fields directly
+		OpenDialog(rv.Interface(), configBtn.QWidget, label, func() {
+			// nothing to do
+			refreshLabel()
 		})
 	})
 	hbox.AddWidget(configBtn.QWidget)
@@ -244,8 +228,10 @@ func handle_ChildStructPtr(area *qt.QFormLayout, typ reflect.Type, tag reflect.S
 	}
 	clearBtn.SetToolTip("Clear")
 	clearBtn.OnClicked(func() {
-		statusField.SetText("Not configured")
-		isAllocated = false
+		if !rv.IsNil() {
+			rv.Set(reflect.Zero(rv.Type()))
+		}
+		refreshLabel()
 	})
 	hbox.AddWidget(clearBtn.QWidget)
 
@@ -253,10 +239,8 @@ func handle_ChildStructPtr(area *qt.QFormLayout, typ reflect.Type, tag reflect.S
 	hboxWidget.SetLayout(hbox.QLayout)
 	area.AddRow3(label+`:`, hboxWidget)
 
-	return func(rv *reflect.Value) {
-		if isAllocated {
-			rv.Set(wipValue)
-		}
+	return func() {
+		// We have already mutated the *rv directly
 	}
 }
 

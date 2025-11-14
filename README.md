@@ -16,6 +16,5 @@ struct Foo {                     []----------------------[]
 It supports the struct tags:
 
 - `ylabel` - Override label. Otherwise, use field name
-- `yinit` - default string value
 - `yfilter` - For "ExistingFile"; filter to apply in popup dialog
 - `yport` - For ”AddressPort"

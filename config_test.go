@@ -26,8 +26,10 @@ func TestAutoConfig(t *testing.T) {
 
 	var myVar testStruct
 
-	OpenDialog(&myVar, nil, "test dialog", func(result ConfigurableStruct) {
-		fmt.Printf("%#v\n", result)
+	fmt.Printf("before = %#v\n", myVar)
+
+	OpenDialog(&myVar, nil, "test dialog", func() {
+		fmt.Printf("after  = %#v\n", myVar)
 	})
 
 	qt.QApplication_Exec()

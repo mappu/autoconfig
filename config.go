@@ -36,21 +36,11 @@ func assignInterfaceStructField(target ConfigurableStruct, fieldId int, cb func(
 }
 
 // MakeConfigArea makes a config area by pushing elements into a QFormLayout.
-func MakeConfigArea(ct ConfigurableStruct, area *qt.QFormLayout) func() ConfigurableStruct {
+func MakeConfigArea(ct ConfigurableStruct, area *qt.QFormLayout) func() {
 
 	obj := reflect.TypeOf(ct).Elem()
 
-	return makeConfigAreaFor(obj, area)
-}
-
-type StructInterface interface {
-	~struct{}
-}
-
-// MakeConfigArea makes a config area by pushing elements into a QFormLayout.
-func makeConfigAreaFor(obj reflect.Type, area *qt.QFormLayout) func() ConfigurableStruct {
-
-	var onApply []func(ConfigurableStruct)
+	var onApply []func()
 
 	nf := obj.NumField()
 	for i := 0; i < nf; i++ {
@@ -78,23 +68,26 @@ func makeConfigAreaFor(obj reflect.Type, area *qt.QFormLayout) func() Configurab
 			panic("makeConfigArea missing handling for type=" + widgetType)
 		}
 
-		singleFieldSaver := handler(area, ff.Type, ff.Tag, label)
+		fieldValue := reflect.ValueOf(ct).Elem().Field(i)
 
-		onApply = append(onApply, func(target ConfigurableStruct) {
-			assignInterfaceStructField(target, i, singleFieldSaver)
+		singleFieldSaver := handler(area, &fieldValue, ff.Tag, label)
+
+		onApply = append(onApply, func() {
+			singleFieldSaver()
+			//assignInterfaceStructField(ct, i, singleFieldSaver)
 		})
 
 	}
 
-	getter := func() ConfigurableStruct {
+	getter := func() {
 
 		// Get a zero-valued version of the struct to start with
-		var ct ConfigurableStruct = reflect.New(obj).Interface().(ConfigurableStruct)
+		//var ct ConfigurableStruct = reflect.New(obj).Interface().(ConfigurableStruct)
 
 		for _, fn := range onApply {
-			fn(ct)
+			fn()
 		}
-		return ct
+		//return ct
 	}
 	return getter
 }
