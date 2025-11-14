@@ -30,15 +30,15 @@ type InitDefaulter interface {
 	InitDefaults()
 }
 
-type saveHandler func()
+type SaveFunc func()
 
-type typeHandler func(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) saveHandler
+type typeHandler func(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc
 
 var (
 	registeredTypes map[string]typeHandler
 )
 
-func handle_bool(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) saveHandler {
+func handle_bool(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
 	rbtn := qt.NewQCheckBox3(label)
 	rbtn.SetChecked(rv.Bool())
 	area.AddRow3("", rbtn.QWidget)
@@ -48,7 +48,7 @@ func handle_bool(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag,
 	}
 }
 
-func handle_string(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) saveHandler {
+func handle_string(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
 	rline := qt.NewQLineEdit2()
 	rline.SetText(rv.String())
 	area.AddRow3(label+`:`, rline.QWidget)
@@ -57,7 +57,7 @@ func handle_string(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTa
 	}
 }
 
-func handle_Password(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) saveHandler {
+func handle_Password(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
 	rline := qt.NewQLineEdit2()
 	rline.SetEchoMode(qt.QLineEdit__Password)
 	rline.SetText(rv.String())
@@ -67,7 +67,7 @@ func handle_Password(area *qt.QFormLayout, rv *reflect.Value, tag reflect.Struct
 	}
 }
 
-func handle_EnumList(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) saveHandler {
+func handle_EnumList(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
 	enumOpts, _ := tag.Lookup("yenum")
 
 	rcombo := qt.NewQComboBox2()
@@ -81,7 +81,7 @@ func handle_EnumList(area *qt.QFormLayout, rv *reflect.Value, tag reflect.Struct
 	}
 }
 
-func handle_ExistingFile(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) saveHandler {
+func handle_ExistingFile(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
 	hbox := qt.NewQHBoxLayout2()
 	hbox.SetContentsMargins(0, 0, 0, 0)
 
@@ -122,7 +122,7 @@ func handle_ExistingFile(area *qt.QFormLayout, rv *reflect.Value, tag reflect.St
 	}
 }
 
-func handle_ExistingDirectory(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) saveHandler {
+func handle_ExistingDirectory(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
 	hbox := qt.NewQHBoxLayout2()
 	hbox.SetContentsMargins(0, 0, 0, 0)
 
@@ -155,7 +155,7 @@ func handle_ExistingDirectory(area *qt.QFormLayout, rv *reflect.Value, tag refle
 	}
 }
 
-func handle_AddressPort(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) saveHandler {
+func handle_AddressPort(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
 	hbox := qt.NewQHBoxLayout2()
 	hbox.SetContentsMargins(0, 0, 0, 0)
 
@@ -182,7 +182,7 @@ func handle_AddressPort(area *qt.QFormLayout, rv *reflect.Value, tag reflect.Str
 	}
 }
 
-func handle_ChildStructPtr(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) saveHandler {
+func handle_ChildStructPtr(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
 
 	hbox := qt.NewQHBoxLayout2()
 	hbox.SetContentsMargins(0, 0, 0, 0)

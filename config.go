@@ -7,40 +7,14 @@ import (
 	qt "github.com/mappu/miqt/qt6"
 )
 
-// assignInterfaceStructField allows you to modify a struct's field by ordinal.
-func assignInterfaceStructField(target ConfigurableStruct, fieldId int, cb func(*reflect.Value)) {
-	// Values contained in an interface are not addressable
-	// Copy the struct value to a temporary variable, set the field
-	// in the temporary variable and copy the temporary variable
-	// back to the interface.
-
-	// v is the interface{}
-	v := reflect.ValueOf(&target).Elem()
-
-	// Allocate a temporary variable with type of the struct.
-	//    v.Elem() is the value contained in the interface.
-	tmp := reflect.New(v.Elem().Type()).Elem()
-
-	// Copy the struct value contained in interface to
-	// the temporary variable.
-	tmp.Set(v.Elem())
-
-	// Set the field.
-	// setText := rline.Text()
-	// tmp.Elem().Field(i) //.SetString(setText)
-	field := tmp.Elem().Field(fieldId)
-	cb(&field)
-
-	// Set the interface to the modified struct value.
-	v.Set(tmp)
-}
-
 // MakeConfigArea makes a config area by pushing elements into a QFormLayout.
-func MakeConfigArea(ct ConfigurableStruct, area *qt.QFormLayout) func() {
+// Use the returned function to force all changes from the UI to be saved to
+// the struct.
+func MakeConfigArea(ct ConfigurableStruct, area *qt.QFormLayout) SaveFunc {
 
 	obj := reflect.TypeOf(ct).Elem()
 
-	var onApply []func()
+	var onApply []SaveFunc
 
 	nf := obj.NumField()
 	for i := 0; i < nf; i++ {
@@ -74,20 +48,14 @@ func MakeConfigArea(ct ConfigurableStruct, area *qt.QFormLayout) func() {
 
 		onApply = append(onApply, func() {
 			singleFieldSaver()
-			//assignInterfaceStructField(ct, i, singleFieldSaver)
 		})
 
 	}
 
-	getter := func() {
-
-		// Get a zero-valued version of the struct to start with
-		//var ct ConfigurableStruct = reflect.New(obj).Interface().(ConfigurableStruct)
-
+	// Save all
+	return func() {
 		for _, fn := range onApply {
 			fn()
 		}
-		//return ct
 	}
-	return getter
 }
