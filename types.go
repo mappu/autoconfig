@@ -11,21 +11,6 @@ import (
 
 type ConfigurableStruct interface{}
 
-type AddressPort struct {
-	Address string
-	Port    int
-}
-
-type MultiLineString string
-
-type ExistingFile string
-
-type ExistingDirectory string
-
-type Password string
-
-type EnumList int
-
 // InitDefaulter is a type that can reset itself to default values.
 // It's used if autoconfig needs to initialize a child struct.
 type InitDefaulter interface {
@@ -34,11 +19,11 @@ type InitDefaulter interface {
 
 type SaveFunc func()
 
-type typeHandler func(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc
-
-var (
-	registeredTypes map[string]typeHandler
-)
+// Autoconfiger is a custom-rendered type that can be interacted with
+// automatically by the autoconfig package.
+type Autoconfiger interface {
+	Autoconfig(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc
+}
 
 func handle_bool(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
 	rbtn := qt.NewQCheckBox3(label)
@@ -59,7 +44,9 @@ func handle_string(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTa
 	}
 }
 
-func handle_MultiLineString(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
+type MultiLineString string
+
+func (MultiLineString) Autoconfig(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
 	rline := qt.NewQTextEdit2()
 	rline.SetPlainText(rv.String())
 	rline.SetAcceptRichText(false)
@@ -69,7 +56,9 @@ func handle_MultiLineString(area *qt.QFormLayout, rv *reflect.Value, tag reflect
 	}
 }
 
-func handle_Password(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
+type Password string
+
+func (Password) Autoconfig(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
 	rline := qt.NewQLineEdit2()
 	rline.SetEchoMode(qt.QLineEdit__Password)
 	rline.SetText(rv.String())
@@ -79,7 +68,9 @@ func handle_Password(area *qt.QFormLayout, rv *reflect.Value, tag reflect.Struct
 	}
 }
 
-func handle_EnumList(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
+type EnumList int
+
+func (EnumList) Autoconfig(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
 	enumOpts, _ := tag.Lookup("yenum")
 
 	rcombo := qt.NewQComboBox2()
@@ -93,7 +84,9 @@ func handle_EnumList(area *qt.QFormLayout, rv *reflect.Value, tag reflect.Struct
 	}
 }
 
-func handle_ExistingFile(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
+type ExistingFile string
+
+func (ExistingFile) Autoconfig(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
 	hbox := qt.NewQHBoxLayout2()
 	hbox.SetContentsMargins(0, 0, 0, 0)
 
@@ -134,7 +127,9 @@ func handle_ExistingFile(area *qt.QFormLayout, rv *reflect.Value, tag reflect.St
 	}
 }
 
-func handle_ExistingDirectory(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
+type ExistingDirectory string
+
+func (ExistingDirectory) Autoconfig(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
 	hbox := qt.NewQHBoxLayout2()
 	hbox.SetContentsMargins(0, 0, 0, 0)
 
@@ -167,7 +162,12 @@ func handle_ExistingDirectory(area *qt.QFormLayout, rv *reflect.Value, tag refle
 	}
 }
 
-func handle_AddressPort(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
+type AddressPort struct {
+	Address string
+	Port    int
+}
+
+func (AddressPort) Autoconfig(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
 	hbox := qt.NewQHBoxLayout2()
 	hbox.SetContentsMargins(0, 0, 0, 0)
 
@@ -263,19 +263,5 @@ func handle_ChildStructPtr(area *qt.QFormLayout, rv *reflect.Value, tag reflect.
 
 	return func() {
 		// We have already mutated the *rv directly
-	}
-}
-
-func init() {
-	registeredTypes = map[string]typeHandler{
-		"bool":              handle_bool,
-		"string":            handle_string,
-		"MultiLineString":   handle_MultiLineString,
-		"Password":          handle_Password,
-		"EnumList":          handle_EnumList,
-		"ExistingFile":      handle_ExistingFile,
-		"ExistingDirectory": handle_ExistingDirectory,
-		"AddressPort":       handle_AddressPort,
-		"__childStruct":     handle_ChildStructPtr,
 	}
 }

@@ -30,16 +30,27 @@ func MakeConfigArea(ct ConfigurableStruct, area *qt.QFormLayout) SaveFunc {
 			label = useLabel
 		}
 
-		widgetType := ff.Type.Name()
+		type typeHandler func(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc
 
-		// Maybe it is a struct pointer? If so, consider it an optional child dialog
-		if ff.Type.Kind() == reflect.Pointer && ff.Type.Elem().Kind() == reflect.Struct {
-			widgetType = "__childStruct"
-		}
+		var handler typeHandler = nil
 
-		handler, ok := registeredTypes[widgetType]
-		if !ok {
-			panic("makeConfigArea missing handling for type=" + widgetType)
+		if autoconfiger, ok := reflect.ValueOf(ct).Elem().Field(i).Interface().(Autoconfiger); ok {
+			handler = autoconfiger.Autoconfig
+
+		} else if ff.Type.Kind() == reflect.Pointer && ff.Type.Elem().Kind() == reflect.Struct {
+			// Maybe it is a struct pointer? If so, consider it an optional child dialog
+			handler = handle_ChildStructPtr
+
+		} else {
+			// Hardcoded implementations for builtin types
+			switch ff.Type.Name() {
+			case "bool":
+				handler = handle_bool
+			case "string":
+				handler = handle_string
+			default:
+				panic("makeConfigArea missing handling for type=" + ff.Type.Name())
+			}
 		}
 
 		fieldValue := reflect.ValueOf(ct).Elem().Field(i)
