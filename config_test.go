@@ -21,6 +21,7 @@ func TestAutoConfig(t *testing.T) {
 		A_Dir             ExistingDirectory
 		Hostname          AddressPort
 		Multiple_Lines    MultiLineString
+		H1                Header `ylabel:"Optional settings with long label spanning columns"`
 		FooPassword       Password
 		Readonly          bool
 		Struct_By_Pointer *testInnerStruct
