@@ -20,6 +20,7 @@ Struct tags:
 
 - `ylabel` - Override label. If not present, the default label is the struct field's name with underscores replaced by spaces.
 - `yfilter` - For "ExistingFile"; filter to apply in popup dialog
+- `yenum` - For "EnumList"; list of dropdown options, separated by double-semicolon (`;;`)
 
 Interfaces:
 

@@ -44,6 +44,7 @@ func handle_string(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTa
 	}
 }
 
+// MultiLineString shows a multi-line string area.
 type MultiLineString string
 
 func (MultiLineString) Autoconfig(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
@@ -56,6 +57,7 @@ func (MultiLineString) Autoconfig(area *qt.QFormLayout, rv *reflect.Value, tag r
 	}
 }
 
+// Password shows a single-line text area with character masking.
 type Password string
 
 func (Password) Autoconfig(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
@@ -68,6 +70,9 @@ func (Password) Autoconfig(area *qt.QFormLayout, rv *reflect.Value, tag reflect.
 	}
 }
 
+// EnumList allows choosing from a dropdown. The integer value is the 0-based index
+// of available options.
+// Available options should be set in the `yenum` struct tag, separated by ";;".
 type EnumList int
 
 func (EnumList) Autoconfig(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
@@ -84,6 +89,9 @@ func (EnumList) Autoconfig(area *qt.QFormLayout, rv *reflect.Value, tag reflect.
 	}
 }
 
+// ExistingFile allows browsing for an existing file.
+// The string value is the absolute path to the file on disk.
+// If the `yfilter` struct tag is present, this allows constraining the file types using Qt syntax.
 type ExistingFile string
 
 func (ExistingFile) Autoconfig(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
@@ -127,6 +135,8 @@ func (ExistingFile) Autoconfig(area *qt.QFormLayout, rv *reflect.Value, tag refl
 	}
 }
 
+// ExistingDirectory allows browsing for an existing directory.
+// The string value is the absolute path to the directory on disk.
 type ExistingDirectory string
 
 func (ExistingDirectory) Autoconfig(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
@@ -162,6 +172,8 @@ func (ExistingDirectory) Autoconfig(area *qt.QFormLayout, rv *reflect.Value, tag
 	}
 }
 
+// AddressPort allows entering a text address and a numeric port.
+// The port is limited to the 0-65535 range.
 type AddressPort struct {
 	Address string
 	Port    int
