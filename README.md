@@ -1,6 +1,9 @@
 # autoconfig
 
-Autoconfig allows you to edit any Go struct with a Qt interface.
+![](https://img.shields.io/badge/License-MIT-green)
+[![Go Reference](https://pkg.go.dev/badge/github.com/mappu/autoconfig.svg)](https://pkg.go.dev/github.com/mappu/autoconfig)
+
+Autoconfig allows you to edit any Go struct with a Qt interface [based on MIQT](https://github.com/mappu/miqt).
 
 ```
 struct Foo {                     []----------------------[]
