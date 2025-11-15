@@ -6,7 +6,8 @@ import (
 
 // OpenDialog opens the struct for editing in a new modal dialog in the current
 // global event loop.
-// The onFinished callback receives nil on cancel.
+// The dialog only has an "OK" button, you can't cancel your modifications to
+// the supplied struct, the struct saver is always called.
 func OpenDialog(ct ConfigurableStruct, parent *qt.QWidget, title string, onFinished func()) {
 
 	dlg := qt.NewQDialog(parent)

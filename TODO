@@ -1,0 +1,30 @@
+- more native types
+	- []T
+	- []*T
+	- []byte
+		- idea: offer to set from file / set from text prompt / ...
+		- check mime type + offer image preview?
+	- struct (non-pointer)
+	- float
+	- optional native (*string, *bool, etc)
+	- type widths + signing variants (int8 vs uint8, ..)
+	- less common native types
+		- complex
+		- rune
+		- uintptr
+		- error (and other interfaces)
+	- embedded struct (behaviour??)
+	- empty struct{}{} (behaviour??)
+- more custom types
+	- "one of..."/discriminator polymorphism option
+	- conditional enablement tags y_enable_if(target==value)
+	- groups/tabs
+	= help popups
+	- font picker
+	- colour picker
+	- date, time, date+time picker
+	- timezone picker
+	- number picker: support suffixes (e.g. percentage)
+	- multiplicative picker (for B/KB/GB, kbit/mbit, s/m/h/d/, ...)
+- test
+	- try on some large native configuration types e.g. &tls.Config{}

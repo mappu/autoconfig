@@ -21,6 +21,8 @@ func MakeConfigArea(ct ConfigurableStruct, area *qt.QFormLayout) SaveFunc {
 		i := i // go1.2xx
 
 		ff := obj.Field(i)
+
+		// Don't show private fields
 		if !ff.IsExported() {
 			continue
 		}

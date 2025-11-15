@@ -23,7 +23,7 @@ Struct tags:
 
 Interfaces:
 
-- `InitDefaulter` - May be used if autconfig needs to construct a new version of your type
+- `InitDefaulter` - May be used if autoconfig needs to construct a new version of your type
 - `Autoconfiger` - Add a fully custom Qt widget
 - `fmt.Stringer` - May be used to format some types for display
 
@@ -31,3 +31,4 @@ Interfaces:
 
 - Passed in struct should be a pointer value
 - Call the saver, but, warning that some fields may be mutated automatically without calling
+- Public fields only
