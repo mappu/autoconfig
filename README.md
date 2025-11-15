@@ -11,10 +11,23 @@ struct Foo {                     []----------------------[]
 
 ## Supported types
 
-- string, bool, AddressPort, ExistingFile, Password
+- string, bool, `*struct`
+- Any custom types (many types included in package)
 
-It supports the struct tags:
+## Customization
 
-- `ylabel` - Override label. Otherwise, use field name
+Struct tags:
+
+- `ylabel` - Override label. If not present, the default label is the struct field's name with underscores replaced by spaces.
 - `yfilter` - For "ExistingFile"; filter to apply in popup dialog
-- `yport` - For ”AddressPort"
+
+Interfaces:
+
+- `InitDefaulter` - May be used if autconfig needs to construct a new version of your type
+- `Autoconfiger` - Add a fully custom Qt widget
+- `fmt.Stringer` - May be used to format some types for display
+
+## Notes
+
+- Passed in struct should be a pointer value
+- Call the saver, but, warning that some fields may be mutated automatically without calling
