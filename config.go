@@ -45,11 +45,13 @@ func MakeConfigArea(ct ConfigurableStruct, area *qt.QFormLayout) SaveFunc {
 
 		} else {
 			// Hardcoded implementations for builtin types
-			switch ff.Type.Name() {
+			switch ff.Type.String() {
 			case "bool":
 				handler = handle_bool
 			case "string":
 				handler = handle_string
+			case "time.Time":
+				handler = handle_stdlibTimeTime
 			default:
 				panic("makeConfigArea missing handling for type=" + ff.Type.Name())
 			}
