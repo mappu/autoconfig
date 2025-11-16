@@ -27,6 +27,10 @@ func MakeConfigArea(ct ConfigurableStruct, area *qt.QFormLayout) SaveFunc {
 			continue
 		}
 
+		if ff.Type.Kind() == reflect.Func {
+			continue // No way we can configure a function
+		}
+
 		label := strings.ReplaceAll(ff.Name, `_`, ` `)   // Automatic name: field value with _ as spaces
 		if useLabel, ok := ff.Tag.Lookup("ylabel"); ok { // Explicit name
 			label = useLabel
@@ -53,7 +57,14 @@ func MakeConfigArea(ct ConfigurableStruct, area *qt.QFormLayout) SaveFunc {
 			case "time.Time":
 				handler = handle_stdlibTimeTime
 			default:
-				panic("makeConfigArea missing handling for type=" + ff.Type.Name())
+				// If it's an interface (error, io.Reader, io.Writer, ...) then
+				// skip it
+				if ff.Type.Kind() == reflect.Interface {
+					continue
+				}
+
+				// A real unsupported type
+				panic("makeConfigArea missing handling for type=" + ff.Type.String())
 			}
 		}
 
