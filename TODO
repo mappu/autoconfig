@@ -1,6 +1,7 @@
+- dialog should scroll for large structs?
 - more native types
-	- []T
 	- []*T
+	- map[string]T, map[int]T
 	- []byte
 		- idea: offer to set from file / set from text prompt / ...
 		- check mime type + offer image preview?
@@ -12,14 +13,20 @@
 		- complex
 		- rune
 		- uintptr
-		- error (and other interfaces)
+		- stdlib interfaces
+			- error
+			- io.Reader, io.Writer (allow opening a file?)
+		- stdlib structs
+			- time.Time
+				- TODO preserve msecs
+				- TODO preserve/set timezone
 	- embedded struct (behaviour??)
 	- empty struct{}{} (behaviour??)
 - more custom types
 	- "one of..."/discriminator polymorphism option
 	- conditional enablement tags y_enable_if(target==value)
 	- groups/tabs
-	= help popups
+	- help popups
 	- font picker
 	- colour picker
 	- date, time, date+time picker
