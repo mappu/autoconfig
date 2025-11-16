@@ -47,6 +47,9 @@ func MakeConfigArea(ct ConfigurableStruct, area *qt.QFormLayout) SaveFunc {
 			// Maybe it is a struct pointer? If so, consider it an optional child dialog
 			handler = handle_ChildStructPtr
 
+		} else if ff.Type.Kind() == reflect.Slice {
+			handler = handle_slice
+
 		} else {
 			// Hardcoded implementations for builtin types
 			switch ff.Type.String() {
