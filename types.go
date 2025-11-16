@@ -36,6 +36,31 @@ func handle_bool(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag,
 	}
 }
 
+func handle_int(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
+	rint := qt.NewQSpinBox2()
+	// Range is split into upper+lower bounds
+	// FIXME will overflow if editing an int64 on 32-bit Qt
+	rint.SetMinimum(-(1 << (rv.Type().Bits() - 1)))
+	rint.SetMaximum(1 << (rv.Type().Bits() - 1))
+
+	area.AddRow3(label+`:`, rint.QWidget)
+	return func() {
+		rv.SetInt(int64(rint.Value()))
+	}
+}
+
+func handle_uint(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
+	rint := qt.NewQSpinBox2()
+	// Range is entirely in nonnegative space
+	rint.SetMinimum(0)
+	rint.SetMaximum(1 << rv.Type().Bits()) // FIXME will overflow if editing an int64 on 32-bit Qt
+
+	area.AddRow3(label+`:`, rint.QWidget)
+	return func() {
+		rv.SetUint(uint64(rint.Value()))
+	}
+}
+
 func handle_string(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
 	rline := qt.NewQLineEdit2()
 	rline.SetText(rv.String())
