@@ -28,6 +28,9 @@ type testStruct struct {
 	Readonly          bool
 	Struct_By_Pointer *testInnerStruct
 	Struct_By_Slice   []testInnerStruct
+	Struct_Ptr_Slice  []*testInnerStruct
+	Deep_Pointer      *****testInnerStruct
+	DirectChild       testInnerStruct
 	Time              time.Time
 	TLSConfig         *tls.Config
 }
@@ -41,6 +44,9 @@ func TestAutoConfig(t *testing.T) {
 	myVar.Struct_By_Slice = []testInnerStruct{
 		testInnerStruct{Bar: true},
 		testInnerStruct{Bar: false},
+	}
+	myVar.Struct_Ptr_Slice = []*testInnerStruct{
+		&testInnerStruct{Bar: true},
 	}
 
 	fmt.Printf("before = %#v\n", myVar)

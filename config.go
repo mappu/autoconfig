@@ -2,7 +2,6 @@ package autoconfig
 
 import (
 	"reflect"
-	"strings"
 
 	qt "github.com/mappu/miqt/qt6"
 )
@@ -12,7 +11,44 @@ import (
 // the struct.
 func MakeConfigArea(ct ConfigurableStruct, area *qt.QFormLayout) SaveFunc {
 
-	obj := reflect.TypeOf(ct).Elem()
+	typ := reflect.TypeOf(ct)
+
+	if typ.Kind() == reflect.Struct {
+		// struct by value
+		// This doesn't work, makeConfigAreaForStruct() will immediately call .Elem()!
+		panic("struct by value, expected by pointer")
+
+	} else if typ.Kind() == reflect.Pointer && typ.Elem().Kind() == reflect.Struct {
+		// struct by pointer (still works)
+		return makeConfigAreaForStruct(ct, area)
+
+	} else if typ.Kind() == reflect.Pointer {
+		// Recurse
+		return makeConfigAreaForPointer(ct, area)
+
+	} else {
+		// singular/non-struct/the struct is deeper than a single pointer level
+		panic(reflect.TypeOf(ct).String())
+	}
+}
+
+func makeConfigAreaForPointer(ct ConfigurableStruct, area *qt.QFormLayout) SaveFunc {
+	obj := reflect.ValueOf(ct).Elem()
+
+	return handle_ChildStructPtr(area, &obj, reflect.StructTag(""), formatLabel(obj.Type().String()))
+}
+
+func makeConfigAreaForStruct(ct ConfigurableStruct, area *qt.QFormLayout) SaveFunc {
+	obj := reflect.ValueOf(ct).Elem()
+
+	return handle_struct(area, &obj, reflect.StructTag(""), formatLabel(obj.Type().String()))
+}
+
+func handle_struct(area *qt.QFormLayout, rv *reflect.Value, _ reflect.StructTag, _ string) SaveFunc {
+
+	// ignore tag and label
+
+	obj := rv.Type()
 
 	var onApply []SaveFunc
 
@@ -31,7 +67,7 @@ func MakeConfigArea(ct ConfigurableStruct, area *qt.QFormLayout) SaveFunc {
 			continue // No way we can configure a function
 		}
 
-		label := strings.ReplaceAll(ff.Name, `_`, ` `)   // Automatic name: field value with _ as spaces
+		label := formatLabel(ff.Name)                    // Automatic name: field value with _ as spaces
 		if useLabel, ok := ff.Tag.Lookup("ylabel"); ok { // Explicit name
 			label = useLabel
 		}
@@ -40,15 +76,23 @@ func MakeConfigArea(ct ConfigurableStruct, area *qt.QFormLayout) SaveFunc {
 
 		var handler typeHandler = nil
 
-		if autoconfiger, ok := reflect.ValueOf(ct).Elem().Field(i).Interface().(Autoconfiger); ok {
+		if autoconfiger, ok := rv.Field(i).Interface().(Autoconfiger); ok {
 			handler = autoconfiger.Autoconfig
 
 		} else if ff.Type.Kind() == reflect.Pointer && ff.Type.Elem().Kind() == reflect.Struct {
 			// Maybe it is a struct pointer? If so, consider it an optional child dialog
 			handler = handle_ChildStructPtr
 
+		} else if ff.Type.Kind() == reflect.Struct {
+			// Struct by non-pointer
+			// Integrate it directly
+			handler = handle_struct
+
 		} else if ff.Type.Kind() == reflect.Slice {
 			handler = handle_slice
+
+		} else if ff.Type.Kind() == reflect.Pointer {
+			handler = handle_ChildStructPtr
 
 		} else {
 			// Hardcoded implementations for builtin types
@@ -71,7 +115,7 @@ func MakeConfigArea(ct ConfigurableStruct, area *qt.QFormLayout) SaveFunc {
 			}
 		}
 
-		fieldValue := reflect.ValueOf(ct).Elem().Field(i)
+		fieldValue := rv.Field(i)
 
 		singleFieldSaver := handler(area, &fieldValue, ff.Tag, label)
 

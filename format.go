@@ -3,6 +3,7 @@ package autoconfig
 import (
 	"fmt"
 	"reflect"
+	"strings"
 )
 
 // formatValue tries to format a plaintext summary of a reflect.Value.
@@ -33,4 +34,11 @@ func formatValue(rv *reflect.Value) string {
 	} else {
 		return "Configured"
 	}
+}
+
+// formatLabel tries to generate a nice label from the automatic struct field.
+func formatLabel(s string) string {
+	// convert _ as spaces
+	// TODO: consider converting CamelCase to spaces
+	return strings.ReplaceAll(s, `_`, ` `)
 }

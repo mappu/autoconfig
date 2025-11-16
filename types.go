@@ -1,7 +1,6 @@
 package autoconfig
 
 import (
-	"fmt"
 	"path/filepath"
 	"reflect"
 	"sort"
