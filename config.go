@@ -37,38 +37,41 @@ func handle_any(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, 
 
 	var handler typeHandler = nil
 
-	if rv.Type().Kind() == reflect.Func {
-		// No way we can configure a function
-
-	} else if autoconfiger, ok := rv.Interface().(Autoconfiger); ok {
+	if autoconfiger, ok := rv.Interface().(Autoconfiger); ok {
 		handler = autoconfiger.Autoconfig
-
-	} else if rv.Type().String() == "bool" {
-		handler = handle_bool
-
-	} else if rv.Type().String() == "string" {
-		handler = handle_string
 
 	} else if rv.Type().String() == "time.Time" {
 		handler = handle_stdlibTimeTime // Handle this case earlier, otherwise, it would match Struct
 
-	} else if rv.Type().Kind() == reflect.Struct {
-		// Struct by non-pointer
-		// Integrate it directly
-		handler = handle_struct
-
-	} else if rv.Type().Kind() == reflect.Slice {
-		handler = handle_slice
-
-	} else if rv.Type().Kind() == reflect.Pointer {
-		handler = handle_pointer
-
-	} else if rv.Type().Kind() == reflect.Interface {
-		// If it's an interface (error, io.Reader, io.Writer, ...) then skip it
-
 	} else {
-		// A real unsupported type
-		panic("makeConfigArea missing handling for type=" + rv.Type().String())
+		switch rv.Type().Kind() {
+		case reflect.Func:
+		// No way we can configure a function
+
+		case reflect.Bool:
+			handler = handle_bool
+
+		case reflect.String:
+			handler = handle_string
+
+		case reflect.Struct:
+			// Struct by non-pointer
+			// Integrate it directly
+			handler = handle_struct
+
+		case reflect.Slice:
+			handler = handle_slice
+
+		case reflect.Pointer:
+			handler = handle_pointer
+
+		case reflect.Interface:
+			// If it's an interface (error, io.Reader, io.Writer, ...) then skip it
+
+		default:
+			// A real unsupported type
+			panic("makeConfigArea missing handling for type=" + rv.Type().String())
+		}
 	}
 
 	return handler(area, rv, tag, label)
