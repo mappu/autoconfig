@@ -208,13 +208,7 @@ func handle_ChildStructPtr(area *qt.QFormLayout, rv *reflect.Value, tag reflect.
 	hbox.AddWidget(statusField.QWidget)
 
 	refreshLabel := func() {
-		if rv.IsNil() {
-			statusField.SetText("Not configured")
-		} else if stringer, ok := rv.Interface().(fmt.Stringer); ok {
-			statusField.SetText(stringer.String())
-		} else {
-			statusField.SetText("Configured")
-		}
+		statusField.SetText(formatValue(rv))
 	}
 	refreshLabel()
 

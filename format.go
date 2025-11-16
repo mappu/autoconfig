@@ -31,6 +31,6 @@ func formatValue(rv *reflect.Value) string {
 		return fmt.Sprintf("%v", rv.Bool())
 
 	} else {
-		return "Object (" + rv.String() + ")"
+		return "Configured"
 	}
 }
