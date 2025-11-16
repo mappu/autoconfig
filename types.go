@@ -219,7 +219,7 @@ func handle_ChildStructPtr(area *qt.QFormLayout, rv *reflect.Value, tag reflect.
 	refreshLabel()
 
 	configBtn := qt.NewQToolButton2()
-	setIcon(configBtn.QAbstractButton, "edit-symbolic", "Edit...", "Edit...")
+	setIcon(configBtn.QAbstractButton, "edit-symbolic", "\u270e" /* pencil emoji */, "Edit...")
 	configBtn.OnClicked(func() {
 
 		// Allocate our rv to be something if it's nothing
