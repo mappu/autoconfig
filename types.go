@@ -103,12 +103,7 @@ func (ExistingFile) Autoconfig(area *qt.QFormLayout, rv *reflect.Value, tag refl
 	hbox.AddWidget(rline.QWidget)
 
 	browseBtn := qt.NewQPushButton2()
-	if qt.QIcon_HasThemeIcon("document-open") {
-		browseBtn.SetIcon(qt.QIcon_FromTheme("document-open"))
-		browseBtn.SetToolTip("Browse...")
-	} else {
-		browseBtn.SetText("Browse...")
-	}
+	setIcon(browseBtn.QAbstractButton, "document-open", "Browse...", "Browse...")
 
 	hbox.AddWidget(browseBtn.QWidget)
 
@@ -148,12 +143,7 @@ func (ExistingDirectory) Autoconfig(area *qt.QFormLayout, rv *reflect.Value, tag
 	hbox.AddWidget(rline.QWidget)
 
 	browseBtn := qt.NewQPushButton2()
-	if qt.QIcon_HasThemeIcon("folder-open") {
-		browseBtn.SetIcon(qt.QIcon_FromTheme("folder-open"))
-		browseBtn.SetToolTip("Browse...")
-	} else {
-		browseBtn.SetText("Browse...")
-	}
+	setIcon(browseBtn.QAbstractButton, "folder-open", "Browse...", "Browse...")
 	hbox.AddWidget(browseBtn.QWidget)
 
 	browseBtn.OnClicked(func() {
@@ -227,12 +217,7 @@ func handle_ChildStructPtr(area *qt.QFormLayout, rv *reflect.Value, tag reflect.
 	refreshLabel()
 
 	configBtn := qt.NewQToolButton2()
-	if qt.QIcon_HasThemeIcon("edit-symbolic") {
-		configBtn.SetIcon(qt.QIcon_FromTheme("edit-symbolic"))
-		configBtn.SetToolTip("Edit...")
-	} else {
-		configBtn.SetText("Edit...")
-	}
+	setIcon(configBtn.QAbstractButton, "edit-symbolic", "Edit...", "Edit...")
 	configBtn.OnClicked(func() {
 
 		// Allocate our rv to be something if it's nothing
@@ -255,12 +240,7 @@ func handle_ChildStructPtr(area *qt.QFormLayout, rv *reflect.Value, tag reflect.
 	hbox.AddWidget(configBtn.QWidget)
 
 	clearBtn := qt.NewQToolButton2()
-	if qt.QIcon_HasThemeIcon("edit-clear") {
-		clearBtn.SetIcon(qt.QIcon_FromTheme("edit-clear"))
-	} else {
-		clearBtn.SetText("\u00d7") // &times; ×
-	}
-	clearBtn.SetToolTip("Clear")
+	setIcon(clearBtn.QAbstractButton, "edit-clear", "\u00d7" /* &times; */, "Clear")
 	clearBtn.OnClicked(func() {
 		if !rv.IsNil() {
 			rv.Set(reflect.Zero(rv.Type()))
