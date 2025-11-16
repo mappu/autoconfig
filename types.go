@@ -197,7 +197,7 @@ func (AddressPort) Autoconfig(area *qt.QFormLayout, rv *reflect.Value, tag refle
 	}
 }
 
-func handle_ChildStructPtr(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
+func handle_pointer(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
 
 	hbox := qt.NewQHBoxLayout2()
 	hbox.SetContentsMargins(0, 0, 0, 0)
@@ -226,8 +226,12 @@ func handle_ChildStructPtr(area *qt.QFormLayout, rv *reflect.Value, tag reflect.
 
 		refreshLabel()
 
-		// Let OpenDialog mutate our new wipValue struct's fields directly
-		OpenDialog(rv.Interface(), configBtn.QWidget, label, func() {
+		// Going through .Interface() makes things non-addressible (Go cannot
+		// assign through an interface).
+
+		child := rv.Elem()
+
+		openDialogFor(&child, configBtn.QWidget, label, func() {
 			// nothing to do
 			refreshLabel()
 		})
@@ -318,12 +322,12 @@ func handle_slice(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag
 	addButton.SetAutoRaise(true)
 	addButton.OnClicked(func() {
 
-		newElem := reflect.New(rv.Type().Elem()) // pointer-to-T, not a T
+		newElem := reflect.New(rv.Type().Elem() /* T */) // pointer-to-T, not a T
 		if defaulter, ok := newElem.Interface().(InitDefaulter); ok {
 			defaulter.InitDefaults()
 		}
 
-		OpenDialog(newElem.Interface(), addButton.QWidget, label, func() {
+		openDialogFor(&newElem, addButton.QWidget, label, func() {
 
 			// insert into slice
 			maybeChangedRv := reflect.Append(*rv, newElem.Elem())
@@ -338,7 +342,7 @@ func handle_slice(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag
 	editIndex := func(idx int) {
 		curVal := rv.Index(idx)
 
-		OpenDialog(curVal.Addr().Interface(), addButton.QWidget, label, func() {
+		openDialogFor(&curVal, addButton.QWidget, label, func() {
 			// we have directly mutated inside the slice already
 
 			// refresh list

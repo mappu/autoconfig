@@ -1,6 +1,8 @@
 package autoconfig
 
 import (
+	"reflect"
+
 	qt "github.com/mappu/miqt/qt6"
 )
 
@@ -9,6 +11,11 @@ import (
 // The dialog only has an "OK" button, you can't cancel your modifications to
 // the supplied struct, the struct saver is always called.
 func OpenDialog(ct ConfigurableStruct, parent *qt.QWidget, title string, onFinished func()) {
+	rv := reflect.ValueOf(ct)
+	openDialogFor(&rv, parent, title, onFinished)
+}
+
+func openDialogFor(rv *reflect.Value, parent *qt.QWidget, title string, onFinished func()) {
 
 	dlg := qt.NewQDialog(parent)
 	dlg.SetModal(true)
@@ -30,7 +37,7 @@ func OpenDialog(ct ConfigurableStruct, parent *qt.QWidget, title string, onFinis
 	formArea.SetContentsMargins(0, 0, 0, 0)
 	formArea.SetSpacing(6)
 	vbox.AddLayout(formArea.QLayout)
-	applyer := MakeConfigArea(ct, formArea)
+	applyer := makeConfigAreaFor(rv, formArea)
 
 	buttons := qt.NewQDialogButtonBox(dlg.QWidget)
 	buttons.SetStandardButtons(qt.QDialogButtonBox__Ok)

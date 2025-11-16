@@ -18,6 +18,7 @@ func (t *testInnerStruct) String() string {
 }
 
 type testStruct struct {
+	EmptyStruct       struct{}
 	Foo               string
 	A_File            ExistingFile
 	A_Dir             ExistingDirectory

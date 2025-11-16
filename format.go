@@ -16,9 +16,6 @@ func formatValue(rv *reflect.Value) string {
 	} else if stringer, ok := rv.Interface().(fmt.Stringer); ok { // n.b. matches if we have a T and (T) String() exists with value reciever
 		return stringer.String()
 
-	} else if stringer, ok := rv.Addr().Interface().(fmt.Stringer); ok { // n.b. matches if we have a T and (*T) String() exists with pointer reciever
-		return stringer.String()
-
 	} else if rv.Kind() == reflect.String {
 		return kind.String()
 
@@ -32,6 +29,13 @@ func formatValue(rv *reflect.Value) string {
 		return fmt.Sprintf("%v", rv.Bool())
 
 	} else {
+
+		if rv.CanAddr() {
+			if stringer, ok := rv.Addr().Interface().(fmt.Stringer); ok { // n.b. matches if we have a T and (*T) String() exists with pointer reciever
+				return stringer.String()
+			}
+		}
+
 		return "Configured"
 	}
 }

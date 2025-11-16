@@ -11,37 +11,68 @@ import (
 // the struct.
 func MakeConfigArea(ct ConfigurableStruct, area *qt.QFormLayout) SaveFunc {
 
-	typ := reflect.TypeOf(ct)
+	rv := reflect.ValueOf(ct)
+	return makeConfigAreaFor(&rv, area)
+}
 
-	if typ.Kind() == reflect.Struct {
-		// struct by value
-		// This doesn't work, makeConfigAreaForStruct() will immediately call .Elem()!
-		panic("struct by value, expected by pointer")
+func makeConfigAreaFor(rv *reflect.Value, area *qt.QFormLayout) SaveFunc {
+	return handle_any(area, rv, reflect.StructTag(""), "Configure")
+}
 
-	} else if typ.Kind() == reflect.Pointer && typ.Elem().Kind() == reflect.Struct {
-		// struct by pointer (still works)
-		return makeConfigAreaForStruct(ct, area)
+func handle_any(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
 
-	} else if typ.Kind() == reflect.Pointer {
-		// Recurse
-		return makeConfigAreaForPointer(ct, area)
+	if !rv.CanAddr() {
+		// Sometimes we'll be supplied with something not addressible, but, points
+		// to something that is addressible
+		if rv.Kind() == reflect.Pointer && rv.Elem().CanAddr() {
+			// Use that instead
+			child := rv.Elem()
+			return handle_any(area, &child, tag, label)
+		}
+
+		panic("Supplied value is not addressable, cannot be mutated?")
+	}
+
+	type typeHandler func(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc
+
+	var handler typeHandler = nil
+
+	if rv.Type().Kind() == reflect.Func {
+		// No way we can configure a function
+
+	} else if autoconfiger, ok := rv.Interface().(Autoconfiger); ok {
+		handler = autoconfiger.Autoconfig
+
+	} else if rv.Type().String() == "bool" {
+		handler = handle_bool
+
+	} else if rv.Type().String() == "string" {
+		handler = handle_string
+
+	} else if rv.Type().String() == "time.Time" {
+		handler = handle_stdlibTimeTime // Handle this case earlier, otherwise, it would match Struct
+
+	} else if rv.Type().Kind() == reflect.Struct {
+		// Struct by non-pointer
+		// Integrate it directly
+		handler = handle_struct
+
+	} else if rv.Type().Kind() == reflect.Slice {
+		handler = handle_slice
+
+	} else if rv.Type().Kind() == reflect.Pointer {
+		handler = handle_pointer
+
+	} else if rv.Type().Kind() == reflect.Interface {
+		// If it's an interface (error, io.Reader, io.Writer, ...) then skip it
 
 	} else {
-		// singular/non-struct/the struct is deeper than a single pointer level
-		panic(reflect.TypeOf(ct).String())
+		// A real unsupported type
+		panic("makeConfigArea missing handling for type=" + rv.Type().String())
 	}
-}
 
-func makeConfigAreaForPointer(ct ConfigurableStruct, area *qt.QFormLayout) SaveFunc {
-	obj := reflect.ValueOf(ct).Elem()
+	return handler(area, rv, tag, label)
 
-	return handle_ChildStructPtr(area, &obj, reflect.StructTag(""), formatLabel(obj.Type().String()))
-}
-
-func makeConfigAreaForStruct(ct ConfigurableStruct, area *qt.QFormLayout) SaveFunc {
-	obj := reflect.ValueOf(ct).Elem()
-
-	return handle_struct(area, &obj, reflect.StructTag(""), formatLabel(obj.Type().String()))
 }
 
 func handle_struct(area *qt.QFormLayout, rv *reflect.Value, _ reflect.StructTag, _ string) SaveFunc {
@@ -63,61 +94,14 @@ func handle_struct(area *qt.QFormLayout, rv *reflect.Value, _ reflect.StructTag,
 			continue
 		}
 
-		if ff.Type.Kind() == reflect.Func {
-			continue // No way we can configure a function
-		}
-
 		label := formatLabel(ff.Name)                    // Automatic name: field value with _ as spaces
 		if useLabel, ok := ff.Tag.Lookup("ylabel"); ok { // Explicit name
 			label = useLabel
 		}
 
-		type typeHandler func(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc
-
-		var handler typeHandler = nil
-
-		if autoconfiger, ok := rv.Field(i).Interface().(Autoconfiger); ok {
-			handler = autoconfiger.Autoconfig
-
-		} else if ff.Type.Kind() == reflect.Pointer && ff.Type.Elem().Kind() == reflect.Struct {
-			// Maybe it is a struct pointer? If so, consider it an optional child dialog
-			handler = handle_ChildStructPtr
-
-		} else if ff.Type.Kind() == reflect.Struct {
-			// Struct by non-pointer
-			// Integrate it directly
-			handler = handle_struct
-
-		} else if ff.Type.Kind() == reflect.Slice {
-			handler = handle_slice
-
-		} else if ff.Type.Kind() == reflect.Pointer {
-			handler = handle_ChildStructPtr
-
-		} else {
-			// Hardcoded implementations for builtin types
-			switch ff.Type.String() {
-			case "bool":
-				handler = handle_bool
-			case "string":
-				handler = handle_string
-			case "time.Time":
-				handler = handle_stdlibTimeTime
-			default:
-				// If it's an interface (error, io.Reader, io.Writer, ...) then
-				// skip it
-				if ff.Type.Kind() == reflect.Interface {
-					continue
-				}
-
-				// A real unsupported type
-				panic("makeConfigArea missing handling for type=" + ff.Type.String())
-			}
-		}
-
 		fieldValue := rv.Field(i)
 
-		singleFieldSaver := handler(area, &fieldValue, ff.Tag, label)
+		singleFieldSaver := handle_any(area, &fieldValue, ff.Tag, label)
 
 		onApply = append(onApply, func() {
 			singleFieldSaver()
