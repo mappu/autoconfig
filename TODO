@@ -1,18 +1,16 @@
 - dialog should scroll for large structs?
 - more native types
-	- []*T
+	- byte
 	- map[string]T, map[int]T
+	- fixed-size arrays
+	- sets / map[T]struct{}{}
+	- complex
 	- []byte
 		- idea: offer to set from file / set from text prompt / ...
 		- check mime type + offer image preview?
-	- struct (non-pointer)
-	- float
-	- optional native (*string, *bool, etc)
-	- type widths + signing variants (int8 vs uint8, ..)
 	- less common native types
-		- complex
-		- rune
-		- uintptr
+		- rune - currently a type alias of int32
+		- time.Duration
 		- stdlib interfaces
 			- error
 			- io.Reader, io.Writer (allow opening a file?)
@@ -20,8 +18,6 @@
 			- time.Time
 				- TODO preserve msecs
 				- TODO preserve/set timezone
-	- embedded struct (behaviour??)
-	- empty struct{}{} (behaviour??)
 - more custom types
 	- "one of..."/discriminator polymorphism option
 	- conditional enablement tags y_enable_if(target==value)
@@ -33,5 +29,5 @@
 	- timezone picker
 	- number picker: support suffixes (e.g. percentage)
 	- multiplicative picker (for B/KB/GB, kbit/mbit, s/m/h/d/, ...)
-- test
-	- try on some large native configuration types e.g. &tls.Config{}
+	- guid
+		- add external handling for popular GUID libraries?
