@@ -17,37 +17,70 @@ func (t *testInnerStruct) String() string {
 	return fmt.Sprintf("my bar is %v", t.Bar)
 }
 
-type testStruct struct {
+type testPrimitives struct {
+	String  string
+	Boolean bool
+	Int     int
+	Int8    int8
+	Int16   int16
+	Int32   int32
+	Int64   int64
+	UInt    uint
+	UInt8   uint8
+	UInt16  uint16
+	UInt32  uint32
+	UInt64  uint64
+	Uintptr uintptr
+}
+
+type testCustomTypes struct {
+	A_File         ExistingFile
+	A_Dir          ExistingDirectory
+	Hostname       AddressPort
+	Multiple_Lines MultiLineString
+	FooPassword    Password
+}
+
+type testStdlibTypes struct {
+	Time      time.Time
+	TLSConfig *tls.Config
+}
+
+type testContainerTypes struct {
 	EmptyStruct       struct{}
-	Foo               string
-	A_File            ExistingFile
-	A_Dir             ExistingDirectory
-	Hostname          AddressPort
-	Multiple_Lines    MultiLineString
-	H1                Header `ylabel:"Optional settings with long label spanning columns"`
-	FooPassword       Password
-	Readonly          bool
 	Struct_By_Pointer *testInnerStruct
 	Struct_By_Slice   []testInnerStruct
 	Struct_Ptr_Slice  []*testInnerStruct
 	Deep_Pointer      *****testInnerStruct
+	H1                Header `ylabel:"Struct by value:"`
 	DirectChild       testInnerStruct
-	Time              time.Time
-	TLSConfig         *tls.Config
+}
+
+type testStruct struct {
+	H1              Header `ylabel:"This is the autoconfig test app"`
+	Primitive_Types *testPrimitives
+	Stdlib_Types    *testStdlibTypes
+	Custom_Types    *testCustomTypes
+	Container_Types *testContainerTypes
 }
 
 func TestAutoConfig(t *testing.T) {
 
 	qt.NewQApplication([]string{"test"})
 
-	var myVar testStruct
-	myVar.Time = time.Now()
-	myVar.Struct_By_Slice = []testInnerStruct{
-		testInnerStruct{Bar: true},
-		testInnerStruct{Bar: false},
-	}
-	myVar.Struct_Ptr_Slice = []*testInnerStruct{
-		&testInnerStruct{Bar: true},
+	myVar := testStruct{
+		Stdlib_Types: &testStdlibTypes{
+			Time: time.Now(),
+		},
+		Container_Types: &testContainerTypes{
+			Struct_By_Slice: []testInnerStruct{
+				testInnerStruct{Bar: true},
+				testInnerStruct{Bar: false},
+			},
+			Struct_Ptr_Slice: []*testInnerStruct{
+				&testInnerStruct{Bar: true},
+			},
+		},
 	}
 
 	fmt.Printf("before = %#v\n", myVar)
