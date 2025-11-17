@@ -45,8 +45,8 @@ func handle_any(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, 
 
 	} else {
 		switch rv.Type().Kind() {
-		case reflect.Func:
-		// No way we can configure a function
+		case reflect.Func, reflect.UnsafePointer:
+		// No way we can configure these types
 
 		case reflect.Bool:
 			handler = handle_bool
@@ -57,7 +57,7 @@ func handle_any(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, 
 		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 			handler = handle_int
 
-		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
 			handler = handle_uint
 
 		case reflect.Struct:
