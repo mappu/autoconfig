@@ -1,6 +1,7 @@
 package autoconfig
 
 import (
+	"math"
 	"path/filepath"
 	"reflect"
 	"sort"
@@ -38,10 +39,23 @@ func handle_bool(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag,
 
 func handle_int(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
 	rint := qt.NewQSpinBox2()
+
 	// Range is split into upper+lower bounds
-	// FIXME will overflow if editing an int64 on 32-bit Qt
-	rint.SetMinimum(-(1 << (rv.Type().Bits() - 1)))
-	rint.SetMaximum(1 << (rv.Type().Bits() - 1))
+	var min, max int
+	switch rv.Type().Bits() {
+	case 8:
+		min, max = math.MinInt8, math.MaxInt8
+	case 16:
+		min, max = math.MinInt16, math.MaxInt16
+	case 32, 64:
+		// QSpinBox is only capable of (signed) int32 maximum
+		// TODO use a different widget
+		min, max = math.MinInt32, math.MaxInt32
+	}
+
+	rint.SetMinimum(min)
+	rint.SetMaximum(max)
+	rint.SetValue(int(rv.Int()))
 
 	area.AddRow3(label+`:`, rint.QWidget)
 	return func() {
@@ -52,8 +66,19 @@ func handle_int(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, 
 func handle_uint(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
 	rint := qt.NewQSpinBox2()
 	// Range is entirely in nonnegative space
+
 	rint.SetMinimum(0)
-	rint.SetMaximum(1 << rv.Type().Bits()) // FIXME will overflow if editing an int64 on 32-bit Qt
+	switch rv.Type().Bits() {
+	case 8:
+		rint.SetMaximum(math.MaxUint8)
+	case 16:
+		rint.SetMaximum(math.MaxUint16)
+	case 32, 64:
+		// QSpinBox is only capable of (signed) int32 maximum
+		// TODO use a different widget
+		rint.SetMaximum(math.MaxInt32)
+	}
+	rint.SetValue(int(rv.Uint()))
 
 	area.AddRow3(label+`:`, rint.QWidget)
 	return func() {

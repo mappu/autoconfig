@@ -58,7 +58,7 @@ func handle_any(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, 
 			handler = handle_int
 
 		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-			handler = handle_int
+			handler = handle_uint
 
 		case reflect.Struct:
 			// Struct by non-pointer
