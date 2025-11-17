@@ -3,6 +3,7 @@ package autoconfig
 import (
 	"crypto/tls"
 	"fmt"
+	"net"
 	"testing"
 	"time"
 
@@ -46,6 +47,7 @@ type testCustomTypes struct {
 type testStdlibTypes struct {
 	Time      time.Time
 	TLSConfig *tls.Config
+	NetDialer *net.Dialer
 }
 
 type testContainerTypes struct {
