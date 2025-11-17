@@ -45,8 +45,9 @@ func handle_any(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, 
 
 	} else {
 		switch rv.Type().Kind() {
-		case reflect.Func, reflect.UnsafePointer:
-		// No way we can configure these types
+		case reflect.Func, reflect.UnsafePointer, reflect.Chan:
+			// No way we can configure these types
+			handler = handle_fixed
 
 		case reflect.Bool:
 			handler = handle_bool
@@ -76,9 +77,21 @@ func handle_any(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, 
 
 		case reflect.Interface:
 			// If it's an interface (error, io.Reader, io.Writer, ...) then skip it
+			handler = handle_fixed
+
+		case reflect.Complex64,
+			reflect.Complex128,
+			reflect.Array,
+			reflect.Map:
+			// TODO
+			// These are probably representable but not yet implemented
+			handler = handle_fixed
 
 		default:
-			// A real unsupported type
+			// The above enum should have covered every constant Kind available
+			// in the stdlib reflect package
+			// If there's something new in here, either data is corrupt or
+			// a future version of Go has added something fundamentally new
 			panic("makeConfigArea missing handling for type=" + rv.Type().String())
 		}
 	}

@@ -104,6 +104,13 @@ func handle_float(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag
 	}
 }
 
+func handle_fixed(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
+	rlabel := qt.NewQLabel2()
+	rlabel.SetText(formatValue(rv))
+	area.AddRow3(label+`:`, rlabel.QWidget)
+	return func() {}
+}
+
 func handle_string(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
 	rline := qt.NewQLineEdit2()
 	rline.SetText(rv.String())
