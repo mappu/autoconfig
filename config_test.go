@@ -31,6 +31,8 @@ type testPrimitives struct {
 	UInt32  uint32
 	UInt64  uint64
 	Uintptr uintptr
+	Float32 float32
+	Float64 float64
 }
 
 type testCustomTypes struct {

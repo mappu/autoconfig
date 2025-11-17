@@ -55,7 +55,7 @@ func handle_int(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, 
 
 	rint.SetMinimum(min)
 	rint.SetMaximum(max)
-	rint.SetValue(int(rv.Int()))
+	rint.SetValue(int(rv.Int())) // After setting bounds, otherwise it gets clamped
 
 	area.AddRow3(label+`:`, rint.QWidget)
 	return func() {
@@ -78,11 +78,29 @@ func handle_uint(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag,
 		// TODO use a different widget
 		rint.SetMaximum(math.MaxInt32)
 	}
-	rint.SetValue(int(rv.Uint()))
+	rint.SetValue(int(rv.Uint())) // After setting bounds, otherwise it gets clamped
 
 	area.AddRow3(label+`:`, rint.QWidget)
 	return func() {
 		rv.SetUint(uint64(rint.Value()))
+	}
+}
+
+func handle_float(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
+	rfloat := qt.NewQDoubleSpinBox2()
+
+	// By default, this is clamped to 100
+	// Just allow ~unlimited, even for float32
+	rfloat.SetMinimum(-math.MaxFloat64)
+	rfloat.SetMaximum(math.MaxFloat64)
+	rfloat.SetValue(rv.Float()) // After setting bounds, otherwise it gets clamped
+
+	// This widget is also fixed to show two decimal places
+	// May want to allow customization from a struct tag?
+
+	area.AddRow3(label+`:`, rfloat.QWidget)
+	return func() {
+		rv.SetFloat(rfloat.Value())
 	}
 }
 
