@@ -6,7 +6,7 @@
 Autoconfig allows you to edit any Go struct with a Qt interface [based on MIQT](https://github.com/mappu/miqt).
 
 ```
-struct Foo {                     []----------------------[]
+type Foo struct {                []----------------------[]
     Name string                  |  Name:  [___________]  |
 }                                |                [Save]  |
                                  []----------------------[]
