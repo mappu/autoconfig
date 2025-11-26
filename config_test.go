@@ -2,6 +2,7 @@ package autoconfig
 
 import (
 	"crypto/tls"
+	"encoding/json"
 	"fmt"
 	"net"
 	"testing"
@@ -97,10 +98,13 @@ func TestAutoConfig(t *testing.T) {
 		},
 	}
 
-	fmt.Printf("before = %#v\n", myVar)
+	jbb, _ := json.MarshalIndent(myVar, "", " ")
+	fmt.Printf("BEFORE\n======\n\n%s\n\n", string(jbb))
 
 	OpenDialog(&myVar, nil, "test dialog", func() {
-		fmt.Printf("after  = %#v\n", myVar)
+
+		jbb, _ := json.MarshalIndent(myVar, "", " ")
+		fmt.Printf("AFTER\n=====\n\n%s\n", string(jbb))
 	})
 
 	qt.QApplication_Exec()
