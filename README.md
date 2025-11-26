@@ -46,6 +46,8 @@ Only public fields are supported. This is a limitation of the standard library `
 	- pointer (optional)
 	- slice
 	- struct
+		- child structs by value, and embedded structs, are rendered inline
+	- empty struct
 - Standard library types
 	- time.Time
 - Custom types
