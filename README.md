@@ -78,3 +78,23 @@ Implement these interfaces to customize the rendering:
 |`Resetter`      |May be used with pointer receiver to reset your type to default values, if autoconfig constructed a new version of your type
 |`Renderer`      |Add a fully custom Qt widget. Use with either value or pointer receiver.
 |`fmt.Stringer`  |May be used to format some types for display
+
+## Changelog
+
+2025-11-26 v0.3.0
+
+- BREAKING: Rename `InitDefaulter` to `Resetter`, rename `Autoconfiger` to `Renderer`
+- Add `OneOf`
+- Renderer interface now supports being implemented on either value or pointer receiver
+- `AddressPort` now renders a string description when used in a slice
+
+2025-11-17 v0.2.0
+
+- Support arbitrary pointers, slices, int, uintptr, float, `time.Time`
+- Add `Header`
+- Skip over unsupported types (func, interface, `unsafe.Pointer`)
+- Fix cosmetic inconsistency when editing types
+
+2025-11-15 v0.1.0
+
+- Initial public release
