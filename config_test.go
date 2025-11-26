@@ -37,6 +37,13 @@ type testPrimitives struct {
 	Float64 float64
 }
 
+type testOneOf struct {
+	SelectedType OneOf
+	File         *ExistingFile      `yicon:"document-open"`
+	Dir          *ExistingDirectory `yicon:"folder-open"`
+	Stdlib       *testStdlibTypes
+}
+
 type testCustomTypes struct {
 	H1             Header `ylabel:"Types by value"`
 	A_File         ExistingFile
@@ -61,6 +68,7 @@ type testStdlibTypes struct {
 
 type testContainerTypes struct {
 	EmptyStruct       struct{}
+	Empty_By_Pointer  *struct{}
 	Struct_By_Pointer *TestInnerStruct
 	Struct_By_Slice   []TestInnerStruct
 	Struct_Ptr_Slice  []*TestInnerStruct
@@ -77,6 +85,7 @@ type testStruct struct {
 	Stdlib_Types    *testStdlibTypes
 	Custom_Types    *testCustomTypes
 	Container_Types *testContainerTypes
+	OneOf           *testOneOf
 }
 
 func TestAutoConfig(t *testing.T) {

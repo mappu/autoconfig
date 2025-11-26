@@ -19,7 +19,6 @@
 				- TODO preserve msecs
 				- TODO preserve/set timezone
 - more custom types
-	- "one of..."/discriminator polymorphism option
 	- conditional enablement tags y_enable_if(target==value)
 	- groups/tabs
 	- help popups

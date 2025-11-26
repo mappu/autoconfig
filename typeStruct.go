@@ -6,7 +6,16 @@ import (
 	qt "github.com/mappu/miqt/qt6"
 )
 
-func handle_struct(area *qt.QFormLayout, rv *reflect.Value, _ reflect.StructTag, _ string) SaveFunc {
+func struct_field_label(ff reflect.StructField) string {
+	if useLabel, ok := ff.Tag.Lookup("ylabel"); ok { // Explicit name
+		return useLabel
+	}
+
+	// Automatic name: field value with _ as spaces
+	return formatLabel(ff.Name)
+}
+
+func handle_struct(area *qt.QFormLayout, rv *reflect.Value, self_tag reflect.StructTag, self_label string) SaveFunc {
 
 	// ignore tag and label
 
@@ -23,14 +32,13 @@ func handle_struct(area *qt.QFormLayout, rv *reflect.Value, _ reflect.StructTag,
 			continue
 		}
 
-		label := formatLabel(ff.Name)                    // Automatic name: field value with _ as spaces
-		if useLabel, ok := ff.Tag.Lookup("ylabel"); ok { // Explicit name
-			label = useLabel
+		if i == 0 && ff.Type.Name() == `OneOf` {
+			return handle_struct_as_OneOf(area, rv, self_tag, self_label)
 		}
 
 		fieldValue := rv.Field(i)
 
-		singleFieldSaver := handle_any(area, &fieldValue, ff.Tag, label)
+		singleFieldSaver := handle_any(area, &fieldValue, ff.Tag, struct_field_label(ff))
 
 		onApply = append(onApply, func() {
 			singleFieldSaver()

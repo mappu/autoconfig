@@ -57,6 +57,7 @@ Only public fields are supported. This is a limitation of the standard library `
 	- ExistingFile
 	- Header
 	- MultilineString
+	- OneOf
 	- Password
 	- Any custom type that implements the `Autoconfiger` interface
 
