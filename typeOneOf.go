@@ -9,8 +9,14 @@ import (
 
 // If a OneOf is the first member in a struct, the struct rendering will change
 // to allow selecting one of the remaining struct members.
+//
 // All the remaining struct members must be pointer types.
+//
 // Each struct member's 'ylabel' tag is used as the dropdown selection's label.
+// Each struct member's 'yicon' tag, if present, is used as the dropdown
+// selection's icon. The icon can either be a theme icon, or (with `:/` prefix)
+// a Qt embedded resource.
+//
 // When saving, only the selected struct member will be populated; all other
 // values will be set to nil.
 type OneOf string

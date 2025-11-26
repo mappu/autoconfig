@@ -68,8 +68,9 @@ Add struct tags to individual fields to customize the rendering:
 |Tag      |Behaviour
 |---------|------
 |`ylabel` |Override label. If not present, the default label is the struct field's name with underscores replaced by spaces.
-|`yfilter`|For "ExistingFile"; filter to apply in popup dialog
 |`yenum`  |For "EnumList"; list of dropdown options, separated by double-semicolon (`;;`)
+|`yfilter`|For "ExistingFile"; filter to apply in popup dialog
+|`yicon`  |For "OneOf"; icon (either from theme, or with `:/` prefix for resource icon)
 
 Implement these interfaces to customize the rendering:
 
