@@ -10,11 +10,11 @@ import (
 	qt "github.com/mappu/miqt/qt6"
 )
 
-type testInnerStruct struct {
+type TestInnerStruct struct {
 	Bar bool
 }
 
-func (t *testInnerStruct) String() string {
+func (t *TestInnerStruct) String() string {
 	return fmt.Sprintf("my bar is %v", t.Bar)
 }
 
@@ -52,12 +52,14 @@ type testStdlibTypes struct {
 
 type testContainerTypes struct {
 	EmptyStruct       struct{}
-	Struct_By_Pointer *testInnerStruct
-	Struct_By_Slice   []testInnerStruct
-	Struct_Ptr_Slice  []*testInnerStruct
-	Deep_Pointer      *****testInnerStruct
+	Struct_By_Pointer *TestInnerStruct
+	Struct_By_Slice   []TestInnerStruct
+	Struct_Ptr_Slice  []*TestInnerStruct
+	Deep_Pointer      *****TestInnerStruct
 	H1                Header `ylabel:"Struct by value:"`
-	DirectChild       testInnerStruct
+	DirectChild       TestInnerStruct
+	H2                Header `ylabel:"Directly embedded struct:"`
+	TestInnerStruct
 }
 
 type testStruct struct {
@@ -77,12 +79,12 @@ func TestAutoConfig(t *testing.T) {
 			Time: time.Now(),
 		},
 		Container_Types: &testContainerTypes{
-			Struct_By_Slice: []testInnerStruct{
-				testInnerStruct{Bar: true},
-				testInnerStruct{Bar: false},
+			Struct_By_Slice: []TestInnerStruct{
+				TestInnerStruct{Bar: true},
+				TestInnerStruct{Bar: false},
 			},
-			Struct_Ptr_Slice: []*testInnerStruct{
-				&testInnerStruct{Bar: true},
+			Struct_Ptr_Slice: []*TestInnerStruct{
+				&TestInnerStruct{Bar: true},
 			},
 		},
 	}
