@@ -49,51 +49,47 @@ func handle_any(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, 
 		panic("Supplied value is not addressable, cannot be mutated?")
 	}
 
-	type typeHandler func(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc
-
-	var handler typeHandler = nil
-
 	if autoconfiger, ok := rv.Interface().(Autoconfiger); ok {
-		handler = autoconfiger.Autoconfig
+		return autoconfiger.Autoconfig(area, rv, tag, label)
 
 	} else if rv.Type().String() == "time.Time" {
-		handler = handle_stdlibTimeTime // Handle this case earlier, otherwise, it would match Struct
+		return handle_stdlibTimeTime(area, rv, tag, label) // Handle this case earlier, otherwise, it would match Struct
 
 	} else {
 		switch rv.Type().Kind() {
 		case reflect.Func, reflect.UnsafePointer, reflect.Chan:
 			// No way we can configure these types
-			handler = handle_fixed
+			return handle_fixed(area, rv, tag, label)
 
 		case reflect.Bool:
-			handler = handle_bool
+			return handle_bool(area, rv, tag, label)
 
 		case reflect.String:
-			handler = handle_string
+			return handle_string(area, rv, tag, label)
 
 		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-			handler = handle_int
+			return handle_int(area, rv, tag, label)
 
 		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
-			handler = handle_uint
+			return handle_uint(area, rv, tag, label)
 
 		case reflect.Float32, reflect.Float64:
-			handler = handle_float
+			return handle_float(area, rv, tag, label)
 
 		case reflect.Struct:
 			// Struct by non-pointer
 			// Integrate it directly
-			handler = handle_struct
+			return handle_struct(area, rv, tag, label)
 
 		case reflect.Slice:
-			handler = handle_slice
+			return handle_slice(area, rv, tag, label)
 
 		case reflect.Pointer:
-			handler = handle_pointer
+			return handle_pointer(area, rv, tag, label)
 
 		case reflect.Interface:
 			// If it's an interface (error, io.Reader, io.Writer, ...) then skip it
-			handler = handle_fixed
+			return handle_fixed(area, rv, tag, label)
 
 		case reflect.Complex64,
 			reflect.Complex128,
@@ -101,7 +97,7 @@ func handle_any(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, 
 			reflect.Map:
 			// TODO
 			// These are probably representable but not yet implemented
-			handler = handle_fixed
+			return handle_fixed(area, rv, tag, label)
 
 		default:
 			// The above enum should have covered every constant Kind available
@@ -111,7 +107,5 @@ func handle_any(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, 
 			panic("makeConfigArea missing handling for type=" + rv.Type().String())
 		}
 	}
-
-	return handler(area, rv, tag, label)
 
 }
