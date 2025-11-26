@@ -40,7 +40,7 @@ type testPrimitives struct {
 type testOneOf struct {
 	SelectedType OneOf
 	File         *ExistingFile      `yicon:"document-open"`
-	Dir          *ExistingDirectory `yicon:"folder-open"`
+	Dir          *ExistingDirectory `yicon:"folder-open" ylabel:"Directory Custom Label"`
 	Stdlib       *testStdlibTypes
 }
 
