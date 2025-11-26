@@ -1,7 +1,9 @@
 package autoconfig
 
 import (
+	"fmt"
 	"reflect"
+	"strings"
 
 	qt "github.com/mappu/miqt/qt6"
 )
@@ -38,4 +40,16 @@ func (AddressPort) Autoconfig(area *qt.QFormLayout, rv *reflect.Value, tag refle
 		newVal := AddressPort{Address: addr.Text(), Port: port.Value()}
 		rv.Set(reflect.ValueOf(newVal))
 	}
+}
+
+func (a AddressPort) String() string {
+	if a == (AddressPort{}) {
+		return "<Not set>"
+	}
+
+	if strings.Contains(a.Address, `:`) {
+		return fmt.Sprintf("[%s]:%d", a.Address, a.Port)
+	}
+
+	return fmt.Sprintf("%s:%d", a.Address, a.Port)
 }
