@@ -28,8 +28,8 @@ func handle_pointer(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructT
 		if rv.IsNil() {
 			rv.Set(reflect.New(rv.Type().Elem()))
 
-			if defaulter, ok := rv.Interface().(InitDefaulter); ok {
-				defaulter.InitDefaults()
+			if defaulter, ok := rv.Interface().(Resetter); ok {
+				defaulter.Reset()
 			}
 		}
 

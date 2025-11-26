@@ -45,8 +45,8 @@ func handle_slice(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag
 	addButton.OnClicked(func() {
 
 		newElem := reflect.New(rv.Type().Elem() /* T */) // pointer-to-T, not a T
-		if defaulter, ok := newElem.Interface().(InitDefaulter); ok {
-			defaulter.InitDefaults()
+		if defaulter, ok := newElem.Interface().(Resetter); ok {
+			defaulter.Reset()
 		}
 
 		openDialogFor(&newElem, addButton.QWidget, label, func() {

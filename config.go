@@ -8,10 +8,10 @@ import (
 
 type ConfigurableStruct interface{}
 
-// InitDefaulter is a type that can reset itself to default values.
+// Resetter is a type that can reset itself to default values.
 // It's used if autoconfig needs to initialize a child struct.
-type InitDefaulter interface {
-	InitDefaults()
+type Resetter interface {
+	Reset()
 }
 
 type SaveFunc func()
