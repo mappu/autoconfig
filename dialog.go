@@ -19,7 +19,6 @@ func openDialogFor(rv *reflect.Value, parent *qt.QWidget, title string, onFinish
 
 	dlg := qt.NewQDialog(parent)
 	dlg.SetModal(true)
-	// dlg.SetMinimumSize2(320, 240) // will grow
 	dlg.SetWindowTitle(title)
 	dlg.SetAttribute(qt.WA_DeleteOnClose)
 
@@ -31,7 +30,6 @@ func openDialogFor(rv *reflect.Value, parent *qt.QWidget, title string, onFinish
 	vbox := qt.NewQVBoxLayout(dlg.QWidget)
 	vbox.SetContentsMargins(11, 11, 11, 11)
 	vbox.SetSpacing(40)
-	// dlg.SetLayout(vbox.QLayout)
 
 	formArea := qt.NewQFormLayout2()
 	formArea.SetContentsMargins(0, 0, 0, 0)
