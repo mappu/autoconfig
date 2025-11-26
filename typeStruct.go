@@ -16,8 +16,6 @@ func handle_struct(area *qt.QFormLayout, rv *reflect.Value, _ reflect.StructTag,
 
 	nf := obj.NumField()
 	for i := 0; i < nf; i++ {
-		i := i // go1.2xx
-
 		ff := obj.Field(i)
 
 		// Don't show private fields
