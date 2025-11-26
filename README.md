@@ -73,5 +73,5 @@ Implement these interfaces to customize the rendering:
 |Interface       |Behaviour
 |----------------|---------
 |`Resetter`      |May be used with pointer receiver to reset your type to default values, if autoconfig constructed a new version of your type
-|`Autoconfiger`  |Add a fully custom Qt widget
+|`Autoconfiger`  |Add a fully custom Qt widget. Use with either value or pointer receiver.
 |`fmt.Stringer`  |May be used to format some types for display

@@ -37,11 +37,19 @@ type testPrimitives struct {
 }
 
 type testCustomTypes struct {
+	H1             Header `ylabel:"Types by value"`
 	A_File         ExistingFile
 	A_Dir          ExistingDirectory
 	Hostname       AddressPort
 	Multiple_Lines MultiLineString
 	FooPassword    Password
+
+	H2                 Header `ylabel:"Types by pointer"`
+	A_File_Ptr         *ExistingFile
+	A_Dir_Ptr          *ExistingDirectory
+	Hostname_Ptr       *AddressPort
+	Multiple_Lines_Ptr *MultiLineString
+	FooPassword_Ptr    *Password
 }
 
 type testStdlibTypes struct {

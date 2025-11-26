@@ -49,7 +49,17 @@ func handle_any(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, 
 		panic("Supplied value is not addressable, cannot be mutated?")
 	}
 
-	if autoconfiger, ok := rv.Interface().(Autoconfiger); ok {
+	if rv.Type().Kind() == reflect.Pointer {
+		// Handle before any other cases (autoconfiger)
+		// If this is a pointer type, we always want it to go the 'Optional' style
+		return handle_pointer(area, rv, tag, label)
+
+	} else if autoconfiger, ok := rv.Interface().(Autoconfiger); ok {
+		// The Autoconfiger interface implemented with a Value receiver and we have a value
+		return autoconfiger.Autoconfig(area, rv, tag, label)
+
+	} else if autoconfiger, ok := rv.Addr().Interface().(Autoconfiger); ok {
+		// The Autoconfiger interface implemented with a Pointer receiver and we have a value
 		return autoconfiger.Autoconfig(area, rv, tag, label)
 
 	} else if rv.Type().String() == "time.Time" {
