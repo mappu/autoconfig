@@ -12,7 +12,7 @@ import (
 // Available options should be set in the `yenum` struct tag, separated by ";;".
 type EnumList int
 
-func (EnumList) Autoconfig(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
+func (EnumList) Render(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
 	enumOpts, _ := tag.Lookup("yenum")
 
 	rcombo := qt.NewQComboBox2()

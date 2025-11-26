@@ -16,10 +16,10 @@ type Resetter interface {
 
 type SaveFunc func()
 
-// Autoconfiger is a custom-rendered type that can be interacted with
+// Renderer is a custom-rendered type that can be interacted with
 // automatically by the autoconfig package.
-type Autoconfiger interface {
-	Autoconfig(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc
+type Renderer interface {
+	Render(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc
 }
 
 // MakeConfigArea makes a config area by pushing elements into a QFormLayout.
@@ -50,17 +50,17 @@ func handle_any(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, 
 	}
 
 	if rv.Type().Kind() == reflect.Pointer {
-		// Handle before any other cases (autoconfiger)
+		// Handle before any other cases (Renderer)
 		// If this is a pointer type, we always want it to go the 'Optional' style
 		return handle_pointer(area, rv, tag, label)
 
-	} else if autoconfiger, ok := rv.Interface().(Autoconfiger); ok {
-		// The Autoconfiger interface implemented with a Value receiver and we have a value
-		return autoconfiger.Autoconfig(area, rv, tag, label)
+	} else if renderer, ok := rv.Interface().(Renderer); ok {
+		// The Renderer interface implemented with a Value receiver and we have a value
+		return renderer.Render(area, rv, tag, label)
 
-	} else if autoconfiger, ok := rv.Addr().Interface().(Autoconfiger); ok {
-		// The Autoconfiger interface implemented with a Pointer receiver and we have a value
-		return autoconfiger.Autoconfig(area, rv, tag, label)
+	} else if renderer, ok := rv.Addr().Interface().(Renderer); ok {
+		// The Renderer interface implemented with a Pointer receiver and we have a value
+		return renderer.Render(area, rv, tag, label)
 
 	} else if rv.Type().String() == "time.Time" {
 		return handle_stdlibTimeTime(area, rv, tag, label) // Handle this case earlier, otherwise, it would match Struct

@@ -12,7 +12,7 @@ import (
 // If the `yfilter` struct tag is present, this allows constraining the file types using Qt syntax.
 type ExistingFile string
 
-func (*ExistingFile) Autoconfig(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
+func (*ExistingFile) Render(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
 	hbox := qt.NewQHBoxLayout2()
 	hbox.SetContentsMargins(0, 0, 0, 0)
 

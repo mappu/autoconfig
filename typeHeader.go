@@ -10,7 +10,7 @@ import (
 // Use the `ylabel` tag to set the header's text.
 type Header struct{}
 
-func (Header) Autoconfig(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
+func (Header) Render(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
 	rlabel := qt.NewQLabel3(label)
 	area.AddRowWithWidget(rlabel.QWidget) // The widget spans both columns.
 	return func() {}

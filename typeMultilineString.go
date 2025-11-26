@@ -9,7 +9,7 @@ import (
 // MultiLineString shows a multi-line string area.
 type MultiLineString string
 
-func (MultiLineString) Autoconfig(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
+func (MultiLineString) Render(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
 	rline := qt.NewQTextEdit2()
 	rline.SetPlainText(rv.String())
 	rline.SetAcceptRichText(false)
