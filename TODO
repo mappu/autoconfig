@@ -1,3 +1,5 @@
+- yfilter on a pointer-to-ExistingFile is not respected
+- string-er should have default behaviour for a OneOf
 - dialog should scroll for large structs?
 - more native types
 	- byte
