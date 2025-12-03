@@ -32,6 +32,14 @@ func MakeConfigArea(ct ConfigurableStruct, area *qt.QFormLayout) SaveFunc {
 }
 
 func makeConfigAreaFor(rv *reflect.Value, area *qt.QFormLayout) SaveFunc {
+
+	// If this layout is already placed inside a widget, reduce layout reflow flicker
+	// This seems to only affect Windows, not Linux
+	if pwdg := area.ParentWidget(); pwdg != nil && pwdg.UpdatesEnabled() {
+		pwdg.SetUpdatesEnabled(false)
+		defer pwdg.SetUpdatesEnabled(true)
+	}
+
 	return handle_any(area, rv, reflect.StructTag(""), "Configure")
 }
 

@@ -27,6 +27,8 @@ func openDialogFor(rv *reflect.Value, parent *qt.QWidget, title string, onFinish
 	//   - FormLayout    <-- attach to config
 	//   - QStandardButtonBar
 
+	dlg.SetUpdatesEnabled(false) // Reduce flicker
+
 	vbox := qt.NewQVBoxLayout(dlg.QWidget)
 	vbox.SetContentsMargins(11, 11, 11, 11)
 	vbox.SetSpacing(40)
@@ -48,6 +50,8 @@ func openDialogFor(rv *reflect.Value, parent *qt.QWidget, title string, onFinish
 		applyer()
 		onFinished()
 	})
+
+	dlg.SetUpdatesEnabled(true) // Reduce flicker
 
 	dlg.Show()
 }
