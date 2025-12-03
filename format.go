@@ -36,6 +36,13 @@ func formatValue(rv *reflect.Value) string {
 			}
 		}
 
+		// For a OneOf, we can try to use the OneOf's current value
+		if rv.Kind() == reflect.Struct && rv.NumField() > 0 && rv.Field(0).Type() == reflect.TypeOf(OneOf("")) {
+			if currentOneOf := rv.Field(0).String(); currentOneOf != "" {
+				return currentOneOf
+			}
+		}
+
 		return "Configured"
 	}
 }
