@@ -41,12 +41,15 @@ Only public fields are supported. This is a limitation of the standard library `
 - Primitive types
 	- string
 	- bool
-	- int (including uintptr, uint, and fixed-width versions)
+	- int
+		- including uintptr, uint, and fixed-width versions
 	- float
 	- pointer (optional)
+		- struct tags on the pointer are passed in to the child renderer
 	- slice
 	- struct
 		- child structs by value, and embedded structs, are rendered inline
+		- struct tags on the slice are passed in to each child renderer
 	- empty struct
 - Standard library types
 	- time.Time
@@ -76,11 +79,22 @@ Implement these interfaces to customize the rendering:
 
 |Interface       |Behaviour
 |----------------|---------
-|`Resetter`      |May be used with pointer receiver to reset your type to default values, if autoconfig constructed a new version of your type
+|`Resetter`      |May be used with pointer receiver to reset your type to default values, if autoconfig constructed a new version of your type (used by OneOf, pointer, and slice)
 |`Renderer`      |Add a fully custom Qt widget. Use with either value or pointer receiver.
 |`fmt.Stringer`  |May be used to format some types for display
 
 ## Changelog
+
+2025-12-03 v0.4.0
+
+- Reduce flicker on Windows by setting Qt UpdatesEnabled false during struct calculation
+- OneOf: support Reset()
+- Labels: Support String() on ExistingFile and ExistingDirectory
+- Labels: Support labels on pointer types, with parenthesis
+- Labels: Support labels on structs using OneOf
+- Labels: Automatically convert CamelCase struct names to separated words
+- Struct tags are now passed through to slice and pointer children (e.g. allowing `yfilter` on `*ExistingFile`)
+- Use accurate type comparison for `time.Time` and `OneOf`, in case of naming conflict in other packages
 
 2025-11-26 v0.3.0
 

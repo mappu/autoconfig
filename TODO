@@ -1,5 +1,3 @@
-- yfilter on a pointer-to-ExistingFile is not respected
-- string-er should have default behaviour for a OneOf
 - dialog should scroll for large structs?
 - more native types
 	- byte
@@ -32,3 +30,5 @@
 	- multiplicative picker (for B/KB/GB, kbit/mbit, s/m/h/d/, ...)
 	- guid
 		- add external handling for popular GUID libraries?
+	- ipv4, ipv6
+	- cidr
