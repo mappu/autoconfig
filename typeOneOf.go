@@ -80,6 +80,10 @@ func handle_struct_as_OneOf(area *qt.QFormLayout, rv *reflect.Value, _ reflect.S
 		// If the value is nil, we have to new it, to have something to work with
 		if ff.IsNil() {
 			ff.Set(reflect.New(ff.Type().Elem()))
+
+			if defaulter, ok := ff.Interface().(Resetter); ok {
+				defaulter.Reset()
+			}
 		}
 
 		child := ff.Elem()
