@@ -85,6 +85,10 @@ Implement these interfaces to customize the rendering:
 
 ## Changelog
 
+2025-12-03 v0.4.1
+
+- Reduce flicker on Windows by enforcing Qt parent relationship during creation
+
 2025-12-03 v0.4.0
 
 - Reduce flicker on Windows by setting Qt UpdatesEnabled false during struct calculation
