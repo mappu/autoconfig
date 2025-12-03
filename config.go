@@ -2,6 +2,7 @@ package autoconfig
 
 import (
 	"reflect"
+	"time"
 
 	qt "github.com/mappu/miqt/qt6"
 )
@@ -72,7 +73,7 @@ func handle_any(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, 
 		// The Renderer interface implemented with a Pointer receiver and we have a value
 		return renderer.Render(area, rv, tag, label)
 
-	} else if rv.Type().String() == "time.Time" {
+	} else if rv.Type() == reflect.TypeOf(time.Time{}) {
 		return handle_stdlibTimeTime(area, rv, tag, label) // Handle this case earlier, otherwise, it would match Struct
 
 	} else {

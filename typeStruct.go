@@ -32,7 +32,7 @@ func handle_struct(area *qt.QFormLayout, rv *reflect.Value, self_tag reflect.Str
 			continue
 		}
 
-		if i == 0 && ff.Type.Name() == `OneOf` {
+		if i == 0 && ff.Type == reflect.TypeOf(OneOf("")) {
 			return handle_struct_as_OneOf(area, rv, self_tag, self_label)
 		}
 
