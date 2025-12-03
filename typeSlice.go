@@ -9,6 +9,10 @@ import (
 
 func handle_slice(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
 
+	// If there is a struct tag applied to the slice, it will be not used here
+	// at all, but it will be propagated into the renderer for the value type
+	// of that slice.
+
 	// HorizontalLayout
 	// - QTreeWidget
 	// - VerticalLayout
@@ -49,7 +53,7 @@ func handle_slice(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag
 			defaulter.Reset()
 		}
 
-		openDialogFor(&newElem, addButton.QWidget, label, func() {
+		openDialogFor(&newElem, addButton.QWidget, tag, label, func() {
 
 			// insert into slice
 			maybeChangedRv := reflect.Append(*rv, newElem.Elem())
@@ -64,7 +68,7 @@ func handle_slice(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag
 	editIndex := func(idx int) {
 		curVal := rv.Index(idx)
 
-		openDialogFor(&curVal, addButton.QWidget, label, func() {
+		openDialogFor(&curVal, addButton.QWidget, tag, label, func() {
 			// we have directly mutated inside the slice already
 
 			// refresh list

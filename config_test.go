@@ -45,15 +45,15 @@ type testOneOf struct {
 }
 
 type testCustomTypes struct {
-	H1             Header `ylabel:"Types by value"`
-	A_File         ExistingFile
+	H1             Header       `ylabel:"Types by value"`
+	A_File         ExistingFile `yfilter:"Text files (*.txt);;All files (*)"`
 	A_Dir          ExistingDirectory
 	Hostname       AddressPort
 	Multiple_Lines MultiLineString
 	FooPassword    Password
 
-	H2                 Header `ylabel:"Types by pointer"`
-	A_File_Ptr         *ExistingFile
+	H2                 Header        `ylabel:"Types by pointer"`
+	A_File_Ptr         *ExistingFile `yfilter:"Text files (*.txt);;All files (*)"`
 	A_Dir_Ptr          *ExistingDirectory
 	Hostname_Ptr       *AddressPort
 	Multiple_Lines_Ptr *MultiLineString
@@ -71,6 +71,7 @@ type testContainerTypes struct {
 	Empty_By_Pointer  *struct{}
 	Struct_By_Pointer *TestInnerStruct
 	Struct_By_Slice   []TestInnerStruct
+	Custom_By_Slice   []ExistingFile `ylabel:"Custom by slice (ylabel)" yfilter:"Text files (*.txt);;All files (*)"` // Tag attributes on slices are passed into the child
 	Struct_Ptr_Slice  []*TestInnerStruct
 	Deep_Pointer      *****TestInnerStruct
 	H1                Header `ylabel:"Struct by value:"`

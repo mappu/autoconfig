@@ -40,7 +40,10 @@ func handle_pointer(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructT
 
 		child := rv.Elem()
 
-		openDialogFor(&child, configBtn.QWidget, label, func() {
+		// Pass through the struct-tag of the pointer field directly to the child
+		// This allows using e.g. yfilter on an ExistingFile
+
+		openDialogFor(&child, configBtn.QWidget, tag, label, func() {
 			// nothing to do
 			refreshLabel()
 		})

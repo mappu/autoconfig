@@ -12,10 +12,10 @@ import (
 // the supplied struct, the struct saver is always called.
 func OpenDialog(ct ConfigurableStruct, parent *qt.QWidget, title string, onFinished func()) {
 	rv := reflect.ValueOf(ct)
-	openDialogFor(&rv, parent, title, onFinished)
+	openDialogFor(&rv, parent, reflect.StructTag(""), title, onFinished)
 }
 
-func openDialogFor(rv *reflect.Value, parent *qt.QWidget, title string, onFinished func()) {
+func openDialogFor(rv *reflect.Value, parent *qt.QWidget, tag reflect.StructTag, title string, onFinished func()) {
 
 	dlg := qt.NewQDialog(parent)
 	dlg.SetModal(true)
@@ -37,7 +37,7 @@ func openDialogFor(rv *reflect.Value, parent *qt.QWidget, title string, onFinish
 	formArea.SetContentsMargins(0, 0, 0, 0)
 	formArea.SetSpacing(6)
 	vbox.AddLayout(formArea.QLayout)
-	applyer := makeConfigAreaFor(rv, formArea)
+	applyer := makeConfigAreaFor(rv, formArea, tag, title)
 
 	buttons := qt.NewQDialogButtonBox(dlg.QWidget)
 	buttons.SetStandardButtons(qt.QDialogButtonBox__Ok)

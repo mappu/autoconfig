@@ -84,7 +84,7 @@ func handle_struct_as_OneOf(area *qt.QFormLayout, rv *reflect.Value, _ reflect.S
 
 		child := ff.Elem()
 
-		saver := makeConfigAreaFor(&child, frame)
+		saver := makeConfigAreaFor(&child, frame, reflect.StructTag(""), defaultLabel)
 
 		stack.AddWidget(frameWidget)
 

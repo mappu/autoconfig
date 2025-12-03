@@ -6,6 +6,8 @@ import (
 	qt "github.com/mappu/miqt/qt6"
 )
 
+const defaultLabel = "Configure"
+
 type ConfigurableStruct interface{}
 
 // Resetter is a type that can reset itself to default values.
@@ -28,10 +30,10 @@ type Renderer interface {
 func MakeConfigArea(ct ConfigurableStruct, area *qt.QFormLayout) SaveFunc {
 
 	rv := reflect.ValueOf(ct)
-	return makeConfigAreaFor(&rv, area)
+	return makeConfigAreaFor(&rv, area, reflect.StructTag(""), defaultLabel)
 }
 
-func makeConfigAreaFor(rv *reflect.Value, area *qt.QFormLayout) SaveFunc {
+func makeConfigAreaFor(rv *reflect.Value, area *qt.QFormLayout, tag reflect.StructTag, label string) SaveFunc {
 
 	// If this layout is already placed inside a widget, reduce layout reflow flicker
 	// This seems to only affect Windows, not Linux
@@ -40,7 +42,7 @@ func makeConfigAreaFor(rv *reflect.Value, area *qt.QFormLayout) SaveFunc {
 		defer pwdg.SetUpdatesEnabled(true)
 	}
 
-	return handle_any(area, rv, reflect.StructTag(""), "Configure")
+	return handle_any(area, rv, tag, label)
 }
 
 func handle_any(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
