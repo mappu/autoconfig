@@ -56,7 +56,41 @@ func formatValue(rv *reflect.Value) string {
 
 // formatLabel tries to generate a nice label from the automatic struct field.
 func formatLabel(s string) string {
-	// convert _ as spaces
-	// TODO: consider converting CamelCase to spaces
-	return strings.ReplaceAll(s, `_`, ` `)
+	// Mode: convert _ as spaces
+	if strings.Contains(s, `_`) {
+		return strings.TrimSpace(strings.ReplaceAll(s, `_`, ` `))
+	}
+
+	// Mode: convert CamelCase to spaces
+	// Handle embedded acronyms (e.g. "TLSConfig" -> "TLS Config")
+	var ret string
+	var hold string // single previous uppercase character
+	for i, ch := range s {
+		_ = i
+		if string(ch) == strings.ToUpper(string(ch)) {
+			// uppercase
+			if len(hold) == 0 && len(ret) > 0 && ret[len(ret)-1] != ' ' {
+				// first uppercase after a previous lowercase = new word
+				ret += " "
+			}
+
+			ret += hold
+			hold = string(ch)
+		} else {
+			// lowercase
+			if len(hold) > 0 {
+				// first lowercase after a previous uppercase
+				if len(ret) > 0 && ret[len(ret)-1] != ' ' {
+					ret += " "
+				}
+				ret += hold
+				hold = ""
+			}
+			ret += string(ch)
+		}
+	}
+	if len(hold) > 0 {
+		ret += hold
+	}
+	return ret
 }
