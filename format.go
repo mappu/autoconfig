@@ -43,6 +43,13 @@ func formatValue(rv *reflect.Value) string {
 			}
 		}
 
+		if rv.Kind() == reflect.Pointer && !rv.IsNil() {
+			// Pointer to something stringable?
+			childItem := rv.Elem()
+			childDisplayname := formatValue(&childItem)
+			return "(" + childDisplayname + ")"
+		}
+
 		return "Configured"
 	}
 }
