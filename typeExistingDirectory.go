@@ -10,6 +10,10 @@ import (
 // The string value is the absolute path to the directory on disk.
 type ExistingDirectory string
 
+func (e ExistingDirectory) String() string {
+	return string(e)
+}
+
 func (ExistingDirectory) Render(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
 	hbox := qt.NewQHBoxLayout2()
 	hbox.SetContentsMargins(0, 0, 0, 0)
