@@ -67,7 +67,7 @@ func handle_struct_as_OneOf(area *qt.QFormLayout, rv *reflect.Value, _ reflect.S
 	for i := 1; i < nf; i++ { // skip ourselves, we were element 0
 		ff := rv.Field(i)
 
-		frameWidget := qt.NewQWidget2()
+		frameWidget := qt.NewQWidget(area.ParentWidget())
 
 		frame := qt.NewQFormLayout2()
 		frameWidget.SetLayout(frame.QLayout)

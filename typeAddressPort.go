@@ -32,7 +32,7 @@ func (AddressPort) Render(area *qt.QFormLayout, rv *reflect.Value, tag reflect.S
 	port.SetValue(int(rv.Field(1).Int())) // Port
 	hbox.AddWidget(port.QWidget)
 
-	hboxWidget := qt.NewQWidget2()
+	hboxWidget := qt.NewQWidget(area.ParentWidget())
 	hboxWidget.SetLayout(hbox.QLayout)
 	area.AddRow3(label+`:`, hboxWidget)
 

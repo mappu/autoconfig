@@ -33,7 +33,7 @@ func (ExistingDirectory) Render(area *qt.QFormLayout, rv *reflect.Value, tag ref
 		}
 	})
 
-	hboxWidget := qt.NewQWidget2()
+	hboxWidget := qt.NewQWidget(area.ParentWidget())
 	hboxWidget.SetLayout(hbox.QLayout)
 	area.AddRow3(label+`:`, hboxWidget)
 
