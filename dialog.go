@@ -33,6 +33,8 @@ func openDialogFor(rv *reflect.Value, parent *qt.QWidget, tag reflect.StructTag,
 	vbox.SetContentsMargins(11, 11, 11, 11)
 	vbox.SetSpacing(40)
 
+	dlg.SetLayout(vbox.QLayout)
+
 	formArea := qt.NewQFormLayout2()
 	formArea.SetContentsMargins(0, 0, 0, 0)
 	formArea.SetSpacing(6)

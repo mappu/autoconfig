@@ -69,8 +69,8 @@ func handle_struct_as_OneOf(area *qt.QFormLayout, rv *reflect.Value, _ reflect.S
 
 		frameWidget := qt.NewQWidget(area.ParentWidget())
 
-		frame := qt.NewQFormLayout2()
-		frameWidget.SetLayout(frame.QLayout)
+		frame := qt.NewQFormLayout(frameWidget)
+		//frameWidget.SetLayout(frame.QLayout)
 
 		if ff.Kind() != reflect.Pointer {
 			// Weird, everything else in here should be a pointer
