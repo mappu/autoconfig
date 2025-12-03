@@ -106,6 +106,9 @@ func TestAutoConfig(t *testing.T) {
 				&TestInnerStruct{Bar: true},
 			},
 		},
+		OneOf: &testOneOf{
+			SelectedType: "Stdlib", // Forcing the type by default should still allow changing it
+		},
 	}
 
 	jbb, _ := json.MarshalIndent(myVar, "", " ")
