@@ -1,18 +1,12 @@
 - dialog should scroll for large structs?
-- more native types
-	- []byte
-		- idea: offer to set from file / set from text prompt / ...
-		- check mime type + offer image preview?
-	- less common native types
-		- rune - currently a type alias of int32
-		- time.Duration
-		- stdlib interfaces
-			- error
-			- io.Reader, io.Writer (allow opening a file?)
-		- stdlib structs
-			- time.Time
-				- TODO preserve msecs
-				- TODO preserve/set timezone
+- stdlib interfaces
+	- error
+	- io.Reader, io.Writer (allow opening a file?)
+- stdlib structs
+	- time.Duration
+	- time.Time
+		- TODO preserve msecs
+		- TODO preserve/set timezone
 - more custom types
 	- conditional enablement tags y_enable_if(target==value)
 	- help popups
@@ -27,3 +21,4 @@
 	- cidr
 - slice/array: allow reordering items up and down
 - file picker that can both save new + allow existing
+- []byte: allow previewing images?

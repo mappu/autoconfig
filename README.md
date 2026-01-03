@@ -38,7 +38,7 @@ Only public fields are supported. This is a limitation of the standard library `
 
 ## Supported types
 
-- Primitive types
+- All Go primitive types
 	- string
 	- bool
 	- int
@@ -48,7 +48,10 @@ Only public fields are supported. This is a limitation of the standard library `
 	- pointer (optional)
 		- struct tags on the pointer are passed in to the child renderer
 	- slice
+	- []byte
+		- supports MIME content detection, multiline text editor, and importing and exporting file content
 	- fixed-size array
+	- map
 	- struct
 		- child structs by value, and embedded structs, are rendered inline
 		- struct tags on the slice are passed in to each child renderer
@@ -91,11 +94,14 @@ Implement these interfaces to customize the rendering:
 
 ## Changelog
 
-unreleased vNext
+2026-01-04 v0.5.0
 
+- Support map
 - Support fixed-size arrays
+- Support `[]byte` with special handling, including MIME content detection and file import/export
 - Support `complex64` and `complex128`
 - Add `TabGroup`
+- Add `yprefix` and `ysuffix` support for int, uint, and float types
 - Labels: Hide standalone `:` if a blank label was used
 - Labels: Hide duplicate labels if text was already shown in dialog/tab/dropdown
 - Fix label formatting for strings
