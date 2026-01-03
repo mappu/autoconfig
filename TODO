@@ -1,7 +1,5 @@
 - dialog should scroll for large structs?
 - more native types
-	- map[string]T, map[int]T
-	- sets / map[T]struct{}{}
 	- []byte
 		- idea: offer to set from file / set from text prompt / ...
 		- check mime type + offer image preview?

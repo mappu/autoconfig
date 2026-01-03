@@ -63,6 +63,10 @@ func handle_map(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, 
 
 			currentOrderingKeys = append(currentOrderingKeys, keyCopy)
 
+			// TODO vField is not addressible here, so formatValue() fails to find
+			// (*T) String() if vField has type T
+			// Although it works if Stringer is implemented on the value receiver
+
 			listItem := qt.NewQTreeWidgetItem2([]string{formatValue(&kField), formatValue(&vField)})
 			itemList.AddTopLevelItem(listItem)
 		}
