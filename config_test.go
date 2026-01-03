@@ -22,6 +22,8 @@ func (t *TestInnerStruct) String() string {
 type testPrimitives struct {
 	String  string
 	Boolean bool
+	Byte    byte
+	Rune    rune
 	Int     int
 	Int8    int8
 	Int16   int16
