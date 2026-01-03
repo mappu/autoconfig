@@ -27,13 +27,19 @@ func handle_struct(area *qt.QFormLayout, rv *reflect.Value, self_tag reflect.Str
 	for i := 0; i < nf; i++ {
 		ff := obj.Field(i)
 
+		// Hooks for special struct types
+		if i == 0 {
+			switch {
+			case ff.Type == reflect.TypeOf(OneOf("")):
+				return handle_struct_as_OneOf(area, rv, self_tag, self_label)
+			case ff.Type == reflect.TypeOf(TabGroup{}):
+				return handle_struct_as_TabGroup(area, rv, self_tag, self_label)
+			}
+		}
+
 		// Don't show private fields
 		if !ff.IsExported() {
 			continue
-		}
-
-		if i == 0 && ff.Type == reflect.TypeOf(OneOf("")) {
-			return handle_struct_as_OneOf(area, rv, self_tag, self_label)
 		}
 
 		fieldValue := rv.Field(i)

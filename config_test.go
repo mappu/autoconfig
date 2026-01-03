@@ -47,6 +47,14 @@ type testOneOf struct {
 	Stdlib       *testStdlibTypes
 }
 
+type testTabGroup struct {
+	_               TabGroup
+	File            ExistingFile `yicon:"document-open"`
+	FilePointer     *ExistingFile
+	MultiLineString MultiLineString
+	Struct          testOneOf
+}
+
 type testCustomTypes struct {
 	H1             Header       `ylabel:"Types by value"`
 	A_File         ExistingFile `yfilter:"Text files (*.txt);;All files (*)"`
@@ -91,6 +99,7 @@ type testStruct struct {
 	Custom_Types    *testCustomTypes
 	Container_Types *testContainerTypes
 	OneOf           *testOneOf
+	TabGroup        *testTabGroup
 }
 
 func TestAutoConfig(t *testing.T) {
