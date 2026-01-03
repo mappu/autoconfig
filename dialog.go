@@ -39,7 +39,8 @@ func openDialogFor(rv *reflect.Value, parent *qt.QWidget, tag reflect.StructTag,
 	formArea.SetContentsMargins(0, 0, 0, 0)
 	formArea.SetSpacing(6)
 	vbox.AddLayout(formArea.QLayout)
-	applyer := makeConfigAreaFor(rv, formArea, tag, title)
+	// Pass through a blank label. The main label is in the dialog header instead.
+	applyer := makeConfigAreaFor(rv, formArea, tag, "")
 
 	buttons := qt.NewQDialogButtonBox(dlg.QWidget)
 	buttons.SetStandardButtons(qt.QDialogButtonBox__Ok)
