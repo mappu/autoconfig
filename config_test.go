@@ -35,6 +35,9 @@ type testPrimitives struct {
 	Uintptr uintptr
 	Float32 float32
 	Float64 float64
+
+	Complex64  complex64
+	Complex128 complex128
 }
 
 type testOneOf struct {

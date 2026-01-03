@@ -97,6 +97,9 @@ func handle_any(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, 
 		case reflect.Float32, reflect.Float64:
 			return handle_float(area, rv, tag, label)
 
+		case reflect.Complex64, reflect.Complex128:
+			return handle_complex(area, rv, tag, label)
+
 		case reflect.Struct:
 			// Struct by non-pointer
 			// Integrate it directly
@@ -112,10 +115,7 @@ func handle_any(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, 
 			// If it's an interface (error, io.Reader, io.Writer, ...) then skip it
 			return handle_fixed(area, rv, tag, label)
 
-		case reflect.Complex64,
-			reflect.Complex128,
-			reflect.Map:
-			// TODO
+		case reflect.Map:
 			// These are probably representable but not yet implemented
 			return handle_fixed(area, rv, tag, label)
 
