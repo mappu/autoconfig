@@ -8,7 +8,6 @@ import (
 
 // formatValue tries to format a plaintext summary of a reflect.Value.
 func formatValue(rv *reflect.Value) string {
-	kind := rv.Kind()
 
 	if rv.Kind() == reflect.Pointer && rv.IsNil() {
 		return "Not configured"
@@ -17,7 +16,12 @@ func formatValue(rv *reflect.Value) string {
 		return stringer.String()
 
 	} else if rv.Kind() == reflect.String {
-		return kind.String()
+		ret := rv.String()
+		if ret == "" {
+			return `""`
+		}
+
+		return ret
 
 	} else if rv.CanInt() {
 		return fmt.Sprintf("%d", rv.Int())

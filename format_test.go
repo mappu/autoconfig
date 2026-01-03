@@ -1,10 +1,33 @@
 package autoconfig
 
 import (
+	"reflect"
 	"testing"
 )
 
-func TestFormat(t *testing.T) {
+func TestFormatValue(t *testing.T) {
+	type testCase struct {
+		input  any
+		expect string
+	}
+
+	cases := []testCase{
+		{input: int32(1337), expect: "1337"},
+		{input: bool(true), expect: "true"},
+		{input: "foo", expect: "foo"},
+	}
+
+	for _, tc := range cases {
+		rv := reflect.ValueOf(tc.input)
+		got := formatValue(&rv)
+		if got != tc.expect {
+			t.Errorf("formatValue(%q): got %q, want %q", tc.input, got, tc.expect)
+		}
+	}
+
+}
+
+func TestFormatLabel(t *testing.T) {
 	type testCase struct {
 		input, expect string
 	}
