@@ -126,12 +126,19 @@ func TestAutoConfig(t *testing.T) {
 		},
 	}
 
-	jbb, _ := json.MarshalIndent(myVar, "", " ")
+	jbb, err := json.MarshalIndent(myVar, "", " ")
+	if err != nil {
+		t.Fatalf("Failed to JSON marshal old struct: %v", err)
+	}
+
 	fmt.Printf("BEFORE\n======\n\n%s\n\n", string(jbb))
 
 	OpenDialog(&myVar, nil, "test dialog", func() {
 
-		jbb, _ := json.MarshalIndent(myVar, "", " ")
+		jbb, err := json.MarshalIndent(myVar, "", " ")
+		if err != nil {
+			t.Fatalf("Failed to JSON marshal new struct: %v", err)
+		}
 		fmt.Printf("AFTER\n=====\n\n%s\n", string(jbb))
 	})
 
