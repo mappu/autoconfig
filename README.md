@@ -44,9 +44,11 @@ Only public fields are supported. This is a limitation of the standard library `
 	- int
 		- including uintptr, uint, and fixed-width versions
 	- float
+	- complex
 	- pointer (optional)
 		- struct tags on the pointer are passed in to the child renderer
 	- slice
+	- fixed-size array
 	- struct
 		- child structs by value, and embedded structs, are rendered inline
 		- struct tags on the slice are passed in to each child renderer
@@ -60,9 +62,11 @@ Only public fields are supported. This is a limitation of the standard library `
 	- ExistingFile
 	- Header
 	- MultilineString
-	- OneOf
 	- Password
 	- Any custom type that implements the `Renderer` interface
+- Custom layouts
+	- OneOf
+	- TabGroup
 
 ## Customization
 
@@ -73,7 +77,7 @@ Add struct tags to individual fields to customize the rendering:
 |`ylabel` |Override label. If not present, the default label is the struct field's name with underscores replaced by spaces.
 |`yenum`  |For "EnumList"; list of dropdown options, separated by double-semicolon (`;;`)
 |`yfilter`|For "ExistingFile"; filter to apply in popup dialog
-|`yicon`  |For "OneOf"; icon (either from theme, or with `:/` prefix for resource icon)
+|`yicon`  |For "OneOf" and "TabGroup"; icon (either from theme, or with `:/` prefix for resource icon)
 
 Implement these interfaces to customize the rendering:
 
@@ -84,6 +88,16 @@ Implement these interfaces to customize the rendering:
 |`fmt.Stringer`  |May be used to format some types for display
 
 ## Changelog
+
+unreleased vNext
+
+- Support fixed-size arrays
+- Support `complex64` and `complex128`
+- Add `TabGroup`
+- Labels: Hide standalone `:` if a blank label was used
+- Labels: Hide duplicate labels if text was already shown in dialog/tab/dropdown
+- Fix label formatting for strings
+- Show `""` as the label formatting for the empty string
 
 2025-12-03 v0.4.1
 

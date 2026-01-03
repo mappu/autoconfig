@@ -1,10 +1,7 @@
 - dialog should scroll for large structs?
 - more native types
-	- byte
 	- map[string]T, map[int]T
-	- fixed-size arrays
 	- sets / map[T]struct{}{}
-	- complex
 	- []byte
 		- idea: offer to set from file / set from text prompt / ...
 		- check mime type + offer image preview?
@@ -20,7 +17,6 @@
 				- TODO preserve/set timezone
 - more custom types
 	- conditional enablement tags y_enable_if(target==value)
-	- groups/tabs
 	- help popups
 	- font picker
 	- colour picker
@@ -32,3 +28,5 @@
 		- add external handling for popular GUID libraries?
 	- ipv4, ipv6
 	- cidr
+- slice/array: allow reordering items up and down
+- file picker that can both save new + allow existing
