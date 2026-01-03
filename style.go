@@ -37,3 +37,31 @@ func addRowLayout(area *qt.QFormLayout, label string, layout *qt.QLayout) {
 		area.AddRow4(label+`:`, layout)
 	}
 }
+
+// addRowBoxAndButtons adds the mainwidget and its buttons to the layout.
+func addRowBoxAndButtons(area *qt.QFormLayout, label string, mainWidget *qt.QWidget, buttons ...*qt.QToolButton) {
+
+	// HorizontalLayout
+	// - QTreeWidget
+	// - VerticalLayout
+	//   - buttons x3
+	//   - vspacer
+
+	hbox := qt.NewQHBoxLayout2()
+	hbox.AddWidget(mainWidget)
+
+	vbox := qt.NewQVBoxLayout2()
+	// TODO if some buttons have icons created and some do not, the widths do
+	// not match - should justify/align the widths(!)
+
+	for _, btn := range buttons {
+		vbox.AddWidget(btn.QWidget)
+	}
+
+	valign := qt.NewQSpacerItem4(0, 0, qt.QSizePolicy__Minimum, qt.QSizePolicy__MinimumExpanding)
+	vbox.AddSpacerItem(valign)
+
+	hbox.AddLayout(vbox.QLayout)
+
+	addRowLayout(area, label, hbox.QLayout)
+}

@@ -13,20 +13,13 @@ func handle_slice_or_array(area *qt.QFormLayout, rv *reflect.Value, tag reflect.
 	// at all, but it will be propagated into the renderer for the value type
 	// of that slice.
 
-	// HorizontalLayout
-	// - QTreeWidget
-	// - VerticalLayout
-	//   - buttons x3
-	//   - vspacer
-
-	hbox := qt.NewQHBoxLayout2()
+	buttons := make([]*qt.QToolButton, 0, 3)
 
 	itemList := qt.NewQTreeWidget2()
 	itemList.SetHeaderHidden(true)
 	itemList.SetUniformRowHeights(true)
 	itemList.SetRootIsDecorated(false)
 	itemList.SetSelectionMode(qt.QAbstractItemView__ContiguousSelection)
-	hbox.AddWidget(itemList.QWidget)
 
 	refreshListContent := func() {
 		itemList.Clear()
@@ -38,10 +31,6 @@ func handle_slice_or_array(area *qt.QFormLayout, rv *reflect.Value, tag reflect.
 		}
 	}
 	refreshListContent()
-
-	vbox := qt.NewQVBoxLayout2()
-	// TODO if some buttons have icons created and some do not, the widths do
-	// not match - should justify/align the widths(!)
 
 	// Adding (Slice only)
 
@@ -67,7 +56,7 @@ func handle_slice_or_array(area *qt.QFormLayout, rv *reflect.Value, tag reflect.
 				refreshListContent()
 			})
 		})
-		vbox.AddWidget(addButton.QWidget)
+		buttons = append(buttons, addButton)
 
 	}
 
@@ -102,7 +91,7 @@ func handle_slice_or_array(area *qt.QFormLayout, rv *reflect.Value, tag reflect.
 		editIndex(curIdx.Row())
 	})
 
-	vbox.AddWidget(editButton.QWidget)
+	buttons = append(buttons, editButton)
 
 	// Deleting (Slice only)
 
@@ -136,7 +125,7 @@ func handle_slice_or_array(area *qt.QFormLayout, rv *reflect.Value, tag reflect.
 			refreshListContent()
 		})
 
-		vbox.AddWidget(delButton.QWidget)
+		buttons = append(buttons, delButton)
 
 	}
 
@@ -153,12 +142,7 @@ func handle_slice_or_array(area *qt.QFormLayout, rv *reflect.Value, tag reflect.
 		super(selected, deselected)
 	})
 
-	valign := qt.NewQSpacerItem4(0, 0, qt.QSizePolicy__Minimum, qt.QSizePolicy__MinimumExpanding)
-	vbox.AddSpacerItem(valign)
-
-	hbox.AddLayout(vbox.QLayout)
-
-	addRowLayout(area, label, hbox.QLayout)
+	addRowBoxAndButtons(area, label, itemList.QWidget, buttons...)
 
 	return func() {
 	}
