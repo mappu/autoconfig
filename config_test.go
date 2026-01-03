@@ -38,8 +38,13 @@ type testPrimitives struct {
 	Float32 float32
 	Float64 float64
 
-	Complex64  complex64
-	Complex128 complex128
+	// Put in a separate struct so they can be nilled on return (not JSON marshallable)
+	ComplexPrimitives *struct {
+		Complex64  complex64
+		Complex128 complex128
+	}
+
+	ByteSlice []byte
 }
 
 type testOneOf struct {
@@ -101,8 +106,9 @@ type testMapTypes struct {
 	Map_String_Pointer map[string]*TestInnerStruct
 	Map_Int_String     map[int64]string
 
-	// Pointer keys are editable, but not JSON-marshallable so not helpful to test
-	// Map_Pointer_String map[*TestInnerStruct]string
+	PointerKeys *struct {
+		Map_Pointer_String map[*TestInnerStruct]string
+	}
 }
 
 type testStruct struct {
@@ -146,6 +152,15 @@ func TestAutoConfig(t *testing.T) {
 	fmt.Printf("BEFORE\n======\n\n%s\n\n", string(jbb))
 
 	OpenDialog(&myVar, nil, "test dialog", func() {
+
+		// Nil out some things that are interesting to test, but, not JSON
+		// marshallable
+		if myVar.Primitive_Types != nil {
+			myVar.Primitive_Types.ComplexPrimitives = nil
+		}
+		if myVar.Map_Types != nil {
+			myVar.Map_Types.PointerKeys = nil
+		}
 
 		jbb, err := json.MarshalIndent(myVar, "", " ")
 		if err != nil {
