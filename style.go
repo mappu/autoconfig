@@ -27,3 +27,13 @@ func addRow(area *qt.QFormLayout, label string, widget *qt.QWidget) {
 		area.AddRow3(label+`:`, widget)
 	}
 }
+
+// addRowLayout adds the widget and label to the layout. It handles the case of a
+// blank label.
+func addRowLayout(area *qt.QFormLayout, label string, layout *qt.QLayout) {
+	if label == "" {
+		area.AddRowWithLayout(layout) // No label
+	} else {
+		area.AddRow4(label+`:`, layout)
+	}
+}

@@ -158,7 +158,7 @@ func handle_slice_or_array(area *qt.QFormLayout, rv *reflect.Value, tag reflect.
 
 	hbox.AddLayout(vbox.QLayout)
 
-	area.AddRow4(label+`:`, hbox.QLayout)
+	addRowLayout(area, label, hbox.QLayout)
 
 	return func() {
 	}
