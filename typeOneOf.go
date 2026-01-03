@@ -21,6 +21,29 @@ import (
 // values will be set to nil.
 type OneOf string
 
+// yicon_from_tag constructs a *QIcon from the `yicon` field in the struct tag.
+// It returns nil if the icon couldn't be constructed.
+func yicon_from_tag(tag reflect.StructTag) *qt.QIcon {
+	if iconTag, ok := tag.Lookup("yicon"); ok {
+		// The icon might be a system theme icon ...
+		if qt.QIcon_HasThemeIcon(iconTag) {
+			return qt.QIcon_FromTheme(iconTag)
+
+		} else if strings.HasPrefix(iconTag, `:/`) {
+			// ... or it might be an embedded resource path
+			return qt.NewQIcon4(iconTag)
+
+		} else {
+			// Shouldn't happen - probably the current PC has fewer
+			// theme icons than the developer expected
+			// No icon
+
+		}
+	}
+
+	return nil
+}
+
 func handle_struct_as_OneOf(area *qt.QFormLayout, rv *reflect.Value, _ reflect.StructTag, _ string) SaveFunc {
 
 	obj := rv.Type()
@@ -39,21 +62,8 @@ func handle_struct_as_OneOf(area *qt.QFormLayout, rv *reflect.Value, _ reflect.S
 			initialIndex = i - 1
 		}
 
-		if iconTag, ok := ff.Tag.Lookup("yicon"); ok {
-			// The icon might be a system theme icon ...
-			if qt.QIcon_HasThemeIcon(iconTag) {
-				picker.SetItemIcon(i-1, qt.QIcon_FromTheme(iconTag))
-
-			} else if strings.HasPrefix(iconTag, `:/`) {
-				// ... or it might be an embedded resource path
-				picker.SetItemIcon(i-1, qt.NewQIcon4(iconTag))
-
-			} else {
-				// Shouldn't happen - probably the current PC has fewer
-				// theme icons than the developer expected
-				// No icon
-
-			}
+		if icon := yicon_from_tag(ff.Tag); icon != nil {
+			picker.SetItemIcon(i-1, icon)
 		}
 	}
 

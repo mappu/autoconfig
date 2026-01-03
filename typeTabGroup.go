@@ -2,7 +2,6 @@ package autoconfig
 
 import (
 	"reflect"
-	"strings"
 
 	qt "github.com/mappu/miqt/qt6"
 )
@@ -32,24 +31,7 @@ func handle_struct_as_TabGroup(area *qt.QFormLayout, rv *reflect.Value, _ reflec
 
 		// Handle icon
 
-		var useIcon *qt.QIcon = nil
-
-		if iconTag, ok := ff.Tag.Lookup("yicon"); ok {
-			// The icon might be a system theme icon ...
-			if qt.QIcon_HasThemeIcon(iconTag) {
-				useIcon = qt.QIcon_FromTheme(iconTag)
-
-			} else if strings.HasPrefix(iconTag, `:/`) {
-				// ... or it might be an embedded resource path
-				useIcon = qt.NewQIcon4(iconTag)
-
-			} else {
-				// Shouldn't happen - probably the current PC has fewer
-				// theme icons than the developer expected
-				// No icon
-
-			}
-		}
+		useIcon := yicon_from_tag(ff.Tag)
 
 		// Create tab frame
 
