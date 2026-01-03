@@ -27,6 +27,13 @@ func handle_int(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, 
 	rint.SetMaximum(max)
 	rint.SetValue(int(rv.Int())) // After setting bounds, otherwise it gets clamped
 
+	if prefix := tag.Get("yprefix"); len(prefix) > 0 {
+		rint.SetPrefix(prefix)
+	}
+	if suffix := tag.Get("ysuffix"); len(suffix) > 0 {
+		rint.SetSuffix(suffix)
+	}
+
 	addRow(area, label, rint.QWidget)
 	return func() {
 		rv.SetInt(int64(rint.Value()))
@@ -49,6 +56,13 @@ func handle_uint(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag,
 		rint.SetMaximum(math.MaxInt32)
 	}
 	rint.SetValue(int(rv.Uint())) // After setting bounds, otherwise it gets clamped
+
+	if prefix := tag.Get("yprefix"); len(prefix) > 0 {
+		rint.SetPrefix(prefix)
+	}
+	if suffix := tag.Get("ysuffix"); len(suffix) > 0 {
+		rint.SetSuffix(suffix)
+	}
 
 	addRow(area, label, rint.QWidget)
 	return func() {

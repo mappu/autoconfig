@@ -78,6 +78,8 @@ Add struct tags to individual fields to customize the rendering:
 |`yenum`  |For "EnumList"; list of dropdown options, separated by double-semicolon (`;;`)
 |`yfilter`|For "ExistingFile"; filter to apply in popup dialog
 |`yicon`  |For "OneOf" and "TabGroup"; icon (either from theme, or with `:/` prefix for resource icon)
+|`yprefix`|For int, uint, float types; text to display as a prefix (e.g. "at least")
+|`ysuffix`|For int, uint, float types; text to display as a suffix (e.g. "%" or "bytes")
 
 Implement these interfaces to customize the rendering:
 

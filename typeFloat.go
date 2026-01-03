@@ -16,6 +16,13 @@ func handle_float(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag
 	rfloat.SetMaximum(math.MaxFloat64)
 	rfloat.SetValue(rv.Float()) // After setting bounds, otherwise it gets clamped
 
+	if prefix := tag.Get("yprefix"); len(prefix) > 0 {
+		rfloat.SetPrefix(prefix)
+	}
+	if suffix := tag.Get("ysuffix"); len(suffix) > 0 {
+		rfloat.SetSuffix(suffix)
+	}
+
 	// This widget is also fixed to show two decimal places
 	// May want to allow customization from a struct tag?
 	addRow(area, label, rfloat.QWidget)

@@ -20,7 +20,6 @@
 	- colour picker
 	- date, time, date+time picker
 	- timezone picker
-	- number picker: support suffixes (e.g. percentage)
 	- multiplicative picker (for B/KB/GB, kbit/mbit, s/m/h/d/, ...)
 	- guid
 		- add external handling for popular GUID libraries?
