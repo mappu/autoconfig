@@ -73,6 +73,7 @@ type testContainerTypes struct {
 	Struct_By_Slice   []TestInnerStruct
 	Custom_By_Slice   []ExistingFile `ylabel:"Custom by slice (ylabel)" yfilter:"Text files (*.txt);;All files (*)"` // Tag attributes on slices are passed into the child
 	Struct_Ptr_Slice  []*TestInnerStruct
+	FixedSizeArray    [4]string
 	Deep_Pointer      *****TestInnerStruct
 	H1                Header `ylabel:"Struct by value:"`
 	DirectChild       TestInnerStruct

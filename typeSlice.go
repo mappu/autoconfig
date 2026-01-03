@@ -7,7 +7,7 @@ import (
 	qt "github.com/mappu/miqt/qt6"
 )
 
-func handle_slice(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
+func handle_slice_or_array(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
 
 	// If there is a struct tag applied to the slice, it will be not used here
 	// at all, but it will be propagated into the renderer for the value type
@@ -43,32 +43,42 @@ func handle_slice(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag
 	// TODO if some buttons have icons created and some do not, the widths do
 	// not match - should justify/align the widths(!)
 
-	addButton := qt.NewQToolButton2()
-	setIcon(addButton.QAbstractButton, "list-add", "+", "Add...")
-	addButton.SetAutoRaise(true)
-	addButton.OnClicked(func() {
+	// Adding (Slice only)
 
-		newElem := reflect.New(rv.Type().Elem() /* T */) // pointer-to-T, not a T
-		if defaulter, ok := newElem.Interface().(Resetter); ok {
-			defaulter.Reset()
-		}
+	if rv.Kind() == reflect.Slice {
 
-		openDialogFor(&newElem, addButton.QWidget, tag, label, func() {
+		addButton := qt.NewQToolButton2()
+		setIcon(addButton.QAbstractButton, "list-add", "+", "Add...")
+		addButton.SetAutoRaise(true)
+		addButton.OnClicked(func() {
 
-			// insert into slice
-			maybeChangedRv := reflect.Append(*rv, newElem.Elem())
-			rv.Set(maybeChangedRv)
+			newElem := reflect.New(rv.Type().Elem() /* T */) // pointer-to-T, not a T
+			if defaulter, ok := newElem.Interface().(Resetter); ok {
+				defaulter.Reset()
+			}
 
-			// refresh list
-			refreshListContent()
+			openDialogFor(&newElem, addButton.QWidget, tag, label, func() {
+
+				// insert into slice
+				maybeChangedRv := reflect.Append(*rv, newElem.Elem())
+				rv.Set(maybeChangedRv)
+
+				// refresh list
+				refreshListContent()
+			})
 		})
-	})
-	vbox.AddWidget(addButton.QWidget)
+		vbox.AddWidget(addButton.QWidget)
+
+	}
+
+	// Editing (Slice or Array)
+
+	editButton := qt.NewQToolButton2()
 
 	editIndex := func(idx int) {
 		curVal := rv.Index(idx)
 
-		openDialogFor(&curVal, addButton.QWidget, tag, label, func() {
+		openDialogFor(&curVal, editButton.QWidget, tag, label, func() {
 			// we have directly mutated inside the slice already
 
 			// refresh list
@@ -82,7 +92,6 @@ func handle_slice(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag
 		editIndex(idx.Row())
 	})
 
-	editButton := qt.NewQToolButton2()
 	setIcon(editButton.QAbstractButton, "document-edit-symbolic", "\u270e" /* pencil emoji */, "Edit...")
 	editButton.SetAutoRaise(true)
 	editButton.OnClicked(func() {
@@ -95,40 +104,48 @@ func handle_slice(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag
 
 	vbox.AddWidget(editButton.QWidget)
 
-	delButton := qt.NewQToolButton2()
-	setIcon(delButton.QAbstractButton, "edit-delete-symbolic", "\u00d7" /* &times; */, "Remove")
-	delButton.SetAutoRaise(true)
+	// Deleting (Slice only)
 
-	delButton.OnClicked(func() {
-		selectedItems := itemList.SelectedItems()
+	var delButton *qt.QToolButton = nil
+	if rv.Kind() == reflect.Slice {
+		delButton = qt.NewQToolButton2()
+		setIcon(delButton.QAbstractButton, "edit-delete-symbolic", "\u00d7" /* &times; */, "Remove")
+		delButton.SetAutoRaise(true)
 
-		// extract indexes
-		var selectedIndexes []int = make([]int, 0, len(selectedItems))
-		for _, itm := range selectedItems {
-			selectedIndexes = append(selectedIndexes, itemList.IndexOfTopLevelItem(itm))
-		}
+		delButton.OnClicked(func() {
+			selectedItems := itemList.SelectedItems()
 
-		// reverse list, so indexes remain stable as we pop them
-		sort.Slice(selectedIndexes, func(i, j int) bool { return i > j })
+			// extract indexes
+			var selectedIndexes []int = make([]int, 0, len(selectedItems))
+			for _, itm := range selectedItems {
+				selectedIndexes = append(selectedIndexes, itemList.IndexOfTopLevelItem(itm))
+			}
 
-		// remove each item
-		for _, removeIdx := range selectedIndexes {
-			updated := rv.Slice(0, removeIdx)
-			afterPart := rv.Slice(removeIdx+1, rv.Len())
-			updated = reflect.AppendSlice(updated, afterPart)
-			rv.Set(updated)
-		}
+			// reverse list, so indexes remain stable as we pop them
+			sort.Slice(selectedIndexes, func(i, j int) bool { return i > j })
 
-		// re-render list
-		refreshListContent()
-	})
+			// remove each item
+			for _, removeIdx := range selectedIndexes {
+				updated := rv.Slice(0, removeIdx)
+				afterPart := rv.Slice(removeIdx+1, rv.Len())
+				updated = reflect.AppendSlice(updated, afterPart)
+				rv.Set(updated)
+			}
 
-	vbox.AddWidget(delButton.QWidget)
+			// re-render list
+			refreshListContent()
+		})
+
+		vbox.AddWidget(delButton.QWidget)
+
+	}
 
 	refreshButtonsEnabled := func() {
 		selCt := len(itemList.SelectedItems())
 		editButton.SetEnabled(selCt == 1)
-		delButton.SetEnabled(selCt > 0)
+		if delButton != nil { // slice only
+			delButton.SetEnabled(selCt > 0)
+		}
 	}
 	refreshButtonsEnabled()
 	itemList.OnSelectionChanged(func(super func(*qt.QItemSelection, *qt.QItemSelection), selected, deselected *qt.QItemSelection) {

@@ -102,8 +102,8 @@ func handle_any(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, 
 			// Integrate it directly
 			return handle_struct(area, rv, tag, label)
 
-		case reflect.Slice:
-			return handle_slice(area, rv, tag, label)
+		case reflect.Slice, reflect.Array:
+			return handle_slice_or_array(area, rv, tag, label)
 
 		case reflect.Pointer:
 			return handle_pointer(area, rv, tag, label)
@@ -114,7 +114,6 @@ func handle_any(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, 
 
 		case reflect.Complex64,
 			reflect.Complex128,
-			reflect.Array,
 			reflect.Map:
 			// TODO
 			// These are probably representable but not yet implemented
