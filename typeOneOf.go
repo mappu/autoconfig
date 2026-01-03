@@ -88,7 +88,8 @@ func handle_struct_as_OneOf(area *qt.QFormLayout, rv *reflect.Value, _ reflect.S
 
 		child := ff.Elem()
 
-		saver := makeConfigAreaFor(&child, frame, reflect.StructTag(""), defaultLabel)
+		// Don't pass in the struct's label here, we already showed it for the tab title
+		saver := makeConfigAreaFor(&child, frame, reflect.StructTag(""), "")
 
 		stack.AddWidget(frameWidget)
 
