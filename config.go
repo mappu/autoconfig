@@ -76,6 +76,9 @@ func handle_any(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, 
 	} else if rv.Type() == reflect.TypeOf(time.Time{}) {
 		return handle_stdlibTimeTime(area, rv, tag, label) // Handle this case earlier, otherwise, it would match Struct
 
+	} else if rv.Type() == reflect.TypeOf([]byte{}) {
+		return handle_byte_slice(area, rv, tag, label) // Handle this case earler, otherwise, it would match slice
+
 	} else {
 		switch rv.Type().Kind() {
 		case reflect.Func, reflect.UnsafePointer, reflect.Chan:
