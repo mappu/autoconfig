@@ -116,8 +116,7 @@ func handle_any(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, 
 			return handle_fixed(area, rv, tag, label)
 
 		case reflect.Map:
-			// These are probably representable but not yet implemented
-			return handle_fixed(area, rv, tag, label)
+			return handle_map(area, rv, tag, label)
 
 		default:
 			// The above enum should have covered every constant Kind available

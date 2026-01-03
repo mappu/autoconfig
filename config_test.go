@@ -94,12 +94,24 @@ type testContainerTypes struct {
 	TestInnerStruct
 }
 
+type testMapTypes struct {
+	Map_String_Empty   map[string]struct{}
+	Map_String_String  map[string]string
+	Map_String_Struct  map[string]TestInnerStruct
+	Map_String_Pointer map[string]*TestInnerStruct
+	Map_Int_String     map[int64]string
+
+	// Pointer keys are editable, but not JSON-marshallable so not helpful to test
+	// Map_Pointer_String map[*TestInnerStruct]string
+}
+
 type testStruct struct {
 	H1              Header `ylabel:"This is the autoconfig test app"`
 	Primitive_Types *testPrimitives
 	Stdlib_Types    *testStdlibTypes
 	Custom_Types    *testCustomTypes
 	Container_Types *testContainerTypes
+	Map_Types       *testMapTypes
 	OneOf           *testOneOf
 	TabGroup        *testTabGroup
 }
