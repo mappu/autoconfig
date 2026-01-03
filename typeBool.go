@@ -9,7 +9,10 @@ import (
 func handle_bool(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
 	rbtn := qt.NewQCheckBox3(label)
 	rbtn.SetChecked(rv.Bool())
-	addRow(area, "", rbtn.QWidget)
+
+	// Don't use addRow() helper since we deliberately want this to appear
+	// in the 2nd column
+	area.AddRow3("", rbtn.QWidget)
 
 	return func() {
 		rv.SetBool(rbtn.IsChecked())
