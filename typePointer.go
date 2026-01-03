@@ -62,7 +62,7 @@ func handle_pointer(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructT
 
 	hboxWidget := qt.NewQWidget(area.ParentWidget())
 	hboxWidget.SetLayout(hbox.QLayout)
-	area.AddRow3(label+`:`, hboxWidget)
+	addRow(area, label, hboxWidget)
 
 	return func() {
 		// We have already mutated the *rv directly

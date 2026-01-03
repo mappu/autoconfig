@@ -9,6 +9,6 @@ import (
 func handle_fixed(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
 	rlabel := qt.NewQLabel2()
 	rlabel.SetText(formatValue(rv))
-	area.AddRow3(label+`:`, rlabel.QWidget)
+	addRow(area, label, rlabel.QWidget)
 	return func() {}
 }

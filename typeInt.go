@@ -27,7 +27,7 @@ func handle_int(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, 
 	rint.SetMaximum(max)
 	rint.SetValue(int(rv.Int())) // After setting bounds, otherwise it gets clamped
 
-	area.AddRow3(label+`:`, rint.QWidget)
+	addRow(area, label, rint.QWidget)
 	return func() {
 		rv.SetInt(int64(rint.Value()))
 	}
@@ -50,7 +50,7 @@ func handle_uint(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag,
 	}
 	rint.SetValue(int(rv.Uint())) // After setting bounds, otherwise it gets clamped
 
-	area.AddRow3(label+`:`, rint.QWidget)
+	addRow(area, label, rint.QWidget)
 	return func() {
 		rv.SetUint(uint64(rint.Value()))
 	}

@@ -13,7 +13,7 @@ func (MultiLineString) Render(area *qt.QFormLayout, rv *reflect.Value, tag refle
 	rline := qt.NewQTextEdit2()
 	rline.SetPlainText(rv.String())
 	rline.SetAcceptRichText(false)
-	area.AddRow3(label+`:`, rline.QWidget)
+	addRow(area, label, rline.QWidget)
 	return func() {
 		rv.SetString(rline.ToPlainText())
 	}

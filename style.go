@@ -17,3 +17,13 @@ func setIcon(btn *qt.QAbstractButton, iconThemeName, fallbackLabel, tooltip stri
 		btn.SetToolTip(tooltip)
 	}
 }
+
+// addRow adds the widget and label to the layout. It handles the case of a
+// blank label.
+func addRow(area *qt.QFormLayout, label string, widget *qt.QWidget) {
+	if label == "" {
+		area.AddRowWithWidget(widget) // No label
+	} else {
+		area.AddRow3(label+`:`, widget)
+	}
+}

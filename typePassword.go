@@ -13,7 +13,7 @@ func (Password) Render(area *qt.QFormLayout, rv *reflect.Value, tag reflect.Stru
 	rline := qt.NewQLineEdit2()
 	rline.SetEchoMode(qt.QLineEdit__Password)
 	rline.SetText(rv.String())
-	area.AddRow3(label+`:`, rline.QWidget)
+	addRow(area, label, rline.QWidget)
 	return func() {
 		rv.SetString(rline.Text())
 	}

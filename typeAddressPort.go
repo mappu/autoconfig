@@ -34,7 +34,7 @@ func (AddressPort) Render(area *qt.QFormLayout, rv *reflect.Value, tag reflect.S
 
 	hboxWidget := qt.NewQWidget(area.ParentWidget())
 	hboxWidget.SetLayout(hbox.QLayout)
-	area.AddRow3(label+`:`, hboxWidget)
+	addRow(area, label, hboxWidget)
 
 	return func() {
 		newVal := AddressPort{Address: addr.Text(), Port: port.Value()}

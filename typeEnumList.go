@@ -19,7 +19,7 @@ func (EnumList) Render(area *qt.QFormLayout, rv *reflect.Value, tag reflect.Stru
 	rcombo.AddItems(strings.Split(enumOpts, `;;`)) // Same separator as Qt filter (yfilter)
 	rcombo.SetCurrentIndex(int(rv.Int()))
 
-	area.AddRow3(label+`:`, rcombo.QWidget)
+	addRow(area, label, rcombo.QWidget)
 
 	return func() {
 		rv.SetInt(int64(rcombo.CurrentIndex()))

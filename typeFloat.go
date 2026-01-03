@@ -18,8 +18,8 @@ func handle_float(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag
 
 	// This widget is also fixed to show two decimal places
 	// May want to allow customization from a struct tag?
+	addRow(area, label, rfloat.QWidget)
 
-	area.AddRow3(label+`:`, rfloat.QWidget)
 	return func() {
 		rv.SetFloat(rfloat.Value())
 	}

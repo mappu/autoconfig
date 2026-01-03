@@ -17,7 +17,7 @@ func handle_stdlibTimeTime(area *qt.QFormLayout, rv *reflect.Value, tag reflect.
 
 	rpicker.SetDateTime(dt)
 
-	area.AddRow3(label+`:`, rpicker.QWidget)
+	addRow(area, label, rpicker.QWidget)
 
 	return func() {
 		newTime := time.Unix(rpicker.DateTime().ToSecsSinceEpoch(), 0)

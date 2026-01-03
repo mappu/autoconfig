@@ -45,7 +45,7 @@ func (*ExistingFile) Render(area *qt.QFormLayout, rv *reflect.Value, tag reflect
 
 	hboxWidget := qt.NewQWidget(area.ParentWidget())
 	hboxWidget.SetLayout(hbox.QLayout)
-	area.AddRow3(label+`:`, hboxWidget)
+	addRow(area, label, hboxWidget)
 
 	return func() {
 		rv.SetString(rline.Text())
