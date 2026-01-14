@@ -47,6 +47,10 @@ type testPrimitives struct {
 	ByteSlice []byte
 }
 
+func (t *testPrimitives) Reset() {
+	t.String = fmt.Sprintf("testPrimitives.Reset() called at %s", time.Now().Format(time.RFC3339))
+}
+
 type testOneOf struct {
 	SelectedType OneOf
 	File         *ExistingFile      `yicon:"document-open"`

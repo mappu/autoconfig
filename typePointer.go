@@ -50,6 +50,30 @@ func handle_pointer(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructT
 	})
 	hbox.AddWidget(configBtn.QWidget)
 
+	// Reset button
+
+	if _, ok := rv.Interface().(Resetter); ok {
+		resetBtn := qt.NewQToolButton2()
+		setIcon(resetBtn.QAbstractButton, "view-refresh", "\u27F3", "Reset to defaults")
+		resetBtn.OnClicked(func() {
+			if rv.IsNil() {
+				rv.Set(reflect.New(rv.Type().Elem()))
+			}
+
+			defaulter, ok := rv.Interface().(Resetter)
+			if ok {
+				defaulter.Reset()
+			} else {
+				resetBtn.SetEnabled(false) // ??? shouldn't be possible
+			}
+
+			refreshLabel()
+		})
+		hbox.AddWidget(resetBtn.QWidget)
+	}
+
+	// Clear button
+
 	clearBtn := qt.NewQToolButton2()
 	setIcon(clearBtn.QAbstractButton, "edit-clear", "\u00d7" /* &times; */, "Clear")
 	clearBtn.OnClicked(func() {
@@ -59,6 +83,8 @@ func handle_pointer(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructT
 		refreshLabel()
 	})
 	hbox.AddWidget(clearBtn.QWidget)
+
+	//
 
 	hboxWidget := qt.NewQWidget(area.ParentWidget())
 	hboxWidget.SetLayout(hbox.QLayout)
