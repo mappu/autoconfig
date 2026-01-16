@@ -21,32 +21,45 @@ func openDialogFor(rv *reflect.Value, parent *qt.QWidget, tag reflect.StructTag,
 	dlg.SetModal(true)
 	dlg.SetWindowTitle(title)
 	dlg.SetAttribute(qt.WA_DeleteOnClose)
+	dlg.SetUpdatesEnabled(false) // Reduce flicker
 
 	// QDialog
 	// - VerticalLayout
-	//   - FormLayout    <-- attach to config
+	//   - QScrollArea
+	//     - QWidget (viewport)
+	//       - FormLayout    <-- attach to config
 	//   - QStandardButtonBar
-
-	dlg.SetUpdatesEnabled(false) // Reduce flicker
-
-	vbox := qt.NewQVBoxLayout(dlg.QWidget)
-	vbox.SetContentsMargins(11, 11, 11, 11)
-	vbox.SetSpacing(40)
-
-	dlg.SetLayout(vbox.QLayout)
 
 	formArea := qt.NewQFormLayout2()
 	formArea.SetContentsMargins(0, 0, 0, 0)
 	formArea.SetSpacing(6)
-	vbox.AddLayout(formArea.QLayout)
+	formArea.SetSizeConstraint(qt.QLayout__SetMinAndMaxSize)
 	// Pass through a blank label. The main label is in the dialog header instead.
 	applyer := makeConfigAreaFor(rv, formArea, tag, "")
+
+	viewport := qt.NewQWidget(dlg.QWidget)
+	viewport.SetLayout(formArea.QLayout)
+
+	scrollArea := qt.NewQScrollArea2()
+	scrollArea.SetFrameShape(qt.QFrame__NoFrame)
+	scrollArea.SetWidgetResizable(true)
+	szp := scrollArea.VerticalScrollBar().SizePolicy()
+	szp.SetRetainSizeWhenHidden(true)
+	scrollArea.VerticalScrollBar().SetSizePolicy(*szp)
+	scrollArea.SetWidget(viewport)
+
+	vbox := qt.NewQVBoxLayout(dlg.QWidget)
+	vbox.SetContentsMargins(11, 11, 11, 11)
+	vbox.SetSpacing(40)
+	vbox.AddWidget(scrollArea.QWidget)
 
 	buttons := qt.NewQDialogButtonBox(dlg.QWidget)
 	buttons.SetStandardButtons(qt.QDialogButtonBox__Ok)
 	buttons.OnAccepted(dlg.Accept)
 	buttons.OnRejected(dlg.Reject)
 	vbox.AddWidget(buttons.QWidget)
+
+	dlg.SetLayout(vbox.QLayout)
 
 	dlg.OnFinished(func(status int) {
 		// Save changes regardless of status
@@ -57,4 +70,13 @@ func openDialogFor(rv *reflect.Value, parent *qt.QWidget, tag reflect.StructTag,
 	dlg.SetUpdatesEnabled(true) // Reduce flicker
 
 	dlg.Show()
+
+	// Ensure the dialog always fits an additional vertical scrollbar, without causing
+	// a horizontal scrollbar to also appear
+	// FIXME This causes horizontal flicker when opening the dialog, but it can't
+	// be done before .Show()
+	// TODO replace with real value from current style metrics
+	const ESTIMATE_VSCROLLBAR_WIDTH = 32
+
+	dlg.SetMinimumWidth(dlg.Width() + ESTIMATE_VSCROLLBAR_WIDTH)
 }

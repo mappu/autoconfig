@@ -1,4 +1,3 @@
-- dialog should scroll for large structs?
 - stdlib interfaces
 	- error
 	- io.Reader, io.Writer (allow opening a file?)
