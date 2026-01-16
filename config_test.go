@@ -4,6 +4,7 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
+	"math"
 	"net"
 	"testing"
 	"time"
@@ -17,6 +18,38 @@ type TestInnerStruct struct {
 
 func (t *TestInnerStruct) String() string {
 	return fmt.Sprintf("my bar is %v", t.Bar)
+}
+
+type testIntegerBounds struct {
+	Int8Min  int8
+	Int8Max  int8
+	Int16Min int16 `yprefix:"zim " ysuffix:" zam"`
+	Int16Max int16
+	Int32Min int32
+	Int32Max int32
+	Int64Min int64 `yprefix:"zim " ysuffix:" zam"`
+	Int64Max int64
+
+	UInt8Max  uint8
+	UInt16Max uint16
+	UInt32Max uint32
+	UInt64Max uint64
+}
+
+func (t *testIntegerBounds) Reset() {
+	t.Int8Min = math.MinInt8
+	t.Int8Max = math.MaxInt8
+	t.Int16Min = math.MinInt16
+	t.Int16Max = math.MaxInt16
+	t.Int32Min = math.MinInt32
+	t.Int32Max = math.MaxInt32
+	t.Int64Min = math.MinInt64
+	t.Int64Max = math.MaxInt64
+
+	t.UInt8Max = math.MaxUint8
+	t.UInt16Max = math.MaxUint16
+	t.UInt32Max = math.MaxUint32
+	t.UInt64Max = math.MaxUint64
 }
 
 type testPrimitives struct {
@@ -118,6 +151,7 @@ type testMapTypes struct {
 type testStruct struct {
 	H1              Header `ylabel:"This is the autoconfig test app"`
 	Primitive_Types *testPrimitives
+	Integer_Bounds  *testIntegerBounds
 	Stdlib_Types    *testStdlibTypes
 	Custom_Types    *testCustomTypes
 	Container_Types *testContainerTypes

@@ -22,5 +22,4 @@
 - slice/array: allow reordering items up and down
 - file picker that can both save new + allow existing
 - []byte: allow previewing images?
-- time.Duration larger than 32-bit: shows up as negative(!!)
 - ability to remotely register renderers outside of this package
