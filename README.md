@@ -96,6 +96,14 @@ Implement these interfaces to customize the rendering:
 
 ## Changelog
 
+2026-01-16 v0.6.0
+
+- Pointers: Allow resetting any pointer type that implements `Resetter`
+- Allow scrolling tall dialog boxes
+- Render "xxDir" string struct fields as if they were `ExistingDirectory`
+- Render "xxPass", "xxPassword" string struct fields as if they were `Password`
+- Fix overflow for int64 and uint32/64 by implementing custom QSpinBox
+
 2026-01-04 v0.5.0
 
 - Support map
