@@ -22,3 +22,4 @@
 - file picker that can both save new + allow existing
 - []byte: allow previewing images?
 - ability to remotely register renderers outside of this package
+- password: show 'reveal' icon

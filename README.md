@@ -43,10 +43,12 @@ Only public fields are supported. This is a limitation of the standard library `
 	- bool
 	- int
 		- including uintptr, uint, and fixed-width versions
+		- A custom QSpinBox is implemented for large bit-width types
 	- float
 	- complex
 	- pointer (optional)
 		- struct tags on the pointer are passed in to the child renderer
+		- supports `Resetter` interface to allow resetting to default values
 	- slice
 	- []byte
 		- supports MIME content detection, multiline text editor, and importing and exporting file content
