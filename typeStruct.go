@@ -2,6 +2,7 @@ package autoconfig
 
 import (
 	"reflect"
+	"strings"
 
 	qt "github.com/mappu/miqt/qt6"
 )
@@ -44,7 +45,20 @@ func handle_struct(area *qt.QFormLayout, rv *reflect.Value, self_tag reflect.Str
 
 		fieldValue := rv.Field(i)
 
-		singleFieldSaver := handle_any(area, &fieldValue, ff.Tag, struct_field_label(ff))
+		// Heuristic: if a string field name is SomethingDir, lift to ExistingDirectory
+		var singleFieldSaver SaveFunc
+
+		if ff.Type == reflect.TypeOf("") && strings.HasSuffix(ff.Name, `Dir`) {
+			tmp := ExistingDirectory("")
+			singleFieldSaver = tmp.Render(area, &fieldValue, ff.Tag, struct_field_label(ff))
+
+		} else if ff.Type == reflect.TypeOf("") && (strings.HasSuffix(ff.Name, `Pass`) || strings.HasSuffix(ff.Name, `Password`)) {
+			tmp := Password("")
+			singleFieldSaver = tmp.Render(area, &fieldValue, ff.Tag, struct_field_label(ff))
+
+		} else {
+			singleFieldSaver = handle_any(area, &fieldValue, ff.Tag, struct_field_label(ff))
+		}
 
 		onApply = append(onApply, func() {
 			singleFieldSaver()

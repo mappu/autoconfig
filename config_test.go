@@ -115,6 +115,18 @@ type testCustomTypes struct {
 	FooPassword_Ptr    *Password
 }
 
+type testHijackedTypes struct {
+	OrdinaryString         string
+	OrdinaryStringDir      string
+	OrdinaryStringPass     string
+	OrdinaryStringPassword string
+
+	OrdinaryInt         int
+	OrdinaryIntDir      int
+	OrdinaryIntPass     int
+	OrdinaryIntPassword int
+}
+
 type testStdlibTypes struct {
 	Time      time.Time
 	TLSConfig *tls.Config
@@ -154,6 +166,7 @@ type testStruct struct {
 	Integer_Bounds  *testIntegerBounds
 	Stdlib_Types    *testStdlibTypes
 	Custom_Types    *testCustomTypes
+	Hijack_Types    *testHijackedTypes
 	Container_Types *testContainerTypes
 	Map_Types       *testMapTypes
 	OneOf           *testOneOf
