@@ -107,6 +107,7 @@ type testCustomTypes struct {
 	Multiple_Lines MultiLineString
 	FooPassword    Password
 	EnumList       EnumList   `yenum:"First;;Second;;Third"`
+	EnumString     EnumString `yenum:"autoconfig_test_enumstring"`
 
 	H2                 Header        `ylabel:"Types by pointer"`
 	A_File_Ptr         *ExistingFile `yfilter:"Text files (*.txt);;All files (*)"`
@@ -177,6 +178,8 @@ type testStruct struct {
 func TestAutoConfig(t *testing.T) {
 
 	qt.NewQApplication([]string{"test"})
+
+	SetEnumStringOptions("autoconfig_test_enumstring", []string{"Harder", "Better", "Faster", "Stronger"})
 
 	myVar := testStruct{
 		Stdlib_Types: &testStdlibTypes{
