@@ -106,6 +106,7 @@ type testCustomTypes struct {
 	Hostname       AddressPort
 	Multiple_Lines MultiLineString
 	FooPassword    Password
+	EnumList       EnumList   `yenum:"First;;Second;;Third"`
 
 	H2                 Header        `ylabel:"Types by pointer"`
 	A_File_Ptr         *ExistingFile `yfilter:"Text files (*.txt);;All files (*)"`
