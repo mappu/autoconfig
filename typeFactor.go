@@ -142,6 +142,22 @@ func (MetricBytes) Render(area *qt.QFormLayout, rv *reflect.Value, tag reflect.S
 	})
 }
 
+// Bitrate is an int64 number of bits/sec. It uses factor-1024 and MB-style names.
+type Bitrate int64
+
+func (Bitrate) Render(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
+	return handle_factor_with(area, rv, tag, label, []factor{
+		{1, "bit"},
+		{8, "B/s"},
+		{1 * 1024, "Kbit"},
+		{8 * 1024, "KB/s"},
+		{1 * 1024 * 1024, "MBit"},
+		{8 * 1024 * 1024, "MB/s"},
+		{1 * 1024 * 1024 * 1024, "GBit"},
+		{8 * 1024 * 1024 * 1024, "GB/s"},
+	})
+}
+
 // The Go stdlib time.Duration is an int64 number of nanoseconds.
 func handle_stdlibTimeDuration(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
 	return handle_factor_with(area, rv, tag, label, []factor{

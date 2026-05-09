@@ -111,6 +111,7 @@ type testCustomTypes struct {
 	CustomFactor   Factor     `yfactor:"1;;years;;10;;decades;;100;;centuries"`
 	Bytes          Bytes
 	MetricBytes    MetricBytes
+	Bitrate        Bitrate
 
 	H2                 Header        `ylabel:"Types by pointer"`
 	A_File_Ptr         *ExistingFile `yfilter:"Text files (*.txt);;All files (*)"`
