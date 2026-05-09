@@ -103,7 +103,7 @@ Implement these interfaces to customize the rendering:
 
 ## Changelog
 
-Unrelease vNext
+2026-05-09 v0.7.0
 
 - Add `EnumString`
 - Add `Factor`
