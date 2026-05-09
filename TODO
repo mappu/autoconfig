@@ -21,3 +21,4 @@
 - []byte: allow previewing images?
 - ability to remotely register renderers outside of this package
 - password: show 'reveal' icon
+- default Gnome/GTK environments do not have a good icon for edit-symbolic / document-edit-symbolic, causes mismatching button appearance for slices
