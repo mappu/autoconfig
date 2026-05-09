@@ -12,6 +12,7 @@ import (
 )
 
 // Factor is an int64 where the effective value is multiplied by some factor.
+// It is the basis for the autoconfig.Bytes and time.Duration types.
 //
 // Use with the `yfactor` tag, e.g.
 //
@@ -109,6 +110,22 @@ func handle_factor_with(area *qt.QFormLayout, rv *reflect.Value, tag reflect.Str
 		rv.SetInt(rawValue)
 	}
 
+}
+
+//
+
+// Bytes is an int64 number of bytes. It uses factor-1024 and MiB-style names.
+type Bytes int64
+
+func (Bytes) Render(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
+	return handle_factor_with(area, rv, tag, label, []factor{
+		{1, "B"},
+		{1024, "KiB"},
+		{1024 * 1024, "MiB"},
+		{1024 * 1024 * 1024, "GiB"},
+		{1024 * 1024 * 1024 * 1024, "TiB"},
+		{1024 * 1024 * 1024 * 1024 * 1024, "PiB"},
+	})
 }
 
 // The Go stdlib time.Duration is an int64 number of nanoseconds.
