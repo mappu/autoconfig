@@ -110,3 +110,15 @@ func handle_factor_with(area *qt.QFormLayout, rv *reflect.Value, tag reflect.Str
 	}
 
 }
+
+// The Go stdlib time.Duration is an int64 number of nanoseconds.
+func handle_stdlibTimeDuration(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
+	return handle_factor_with(area, rv, tag, label, []factor{
+		{int64(time.Nanosecond), "nsec"},  // x1
+		{int64(time.Microsecond), "μsec"}, // x1000
+		{int64(time.Millisecond), "ms"},   // x1000 x1000
+		{int64(time.Second), "seconds"},   // x1000 x1000 x1000
+		{int64(time.Minute), "minutes"},   // x1000 x1000 x1000 x60
+		{int64(time.Hour), "hours"},       // x1000 x1000 x1000 x60 x60
+	})
+}

@@ -59,7 +59,7 @@ Only public fields are supported. This is a limitation of the standard library `
 		- struct tags on the slice are passed in to each child renderer
 	- empty struct
 - Standard library types
-	- time.Time
+	- time.Time, time.Duration
 - Custom types
 	- AddressPort
 	- EnumList

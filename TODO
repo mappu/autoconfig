@@ -2,7 +2,6 @@
 	- error
 	- io.Reader, io.Writer (allow opening a file?)
 - stdlib structs
-	- time.Duration
 	- time.Time
 		- TODO preserve msecs
 		- TODO preserve/set timezone

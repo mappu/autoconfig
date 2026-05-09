@@ -132,6 +132,7 @@ type testHijackedTypes struct {
 
 type testStdlibTypes struct {
 	Time      time.Time
+	Duration  time.Duration
 	TLSConfig *tls.Config
 	NetDialer *net.Dialer
 }
