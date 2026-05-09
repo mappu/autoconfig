@@ -128,6 +128,20 @@ func (Bytes) Render(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructT
 	})
 }
 
+// MetricBytes is an int64 number of bytes. It uses factor-1000 and MB-style names.
+type MetricBytes int64
+
+func (MetricBytes) Render(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
+	return handle_factor_with(area, rv, tag, label, []factor{
+		{1, "B"},
+		{1000, "KB"},
+		{1000 * 1000, "MB"},
+		{1000 * 1000 * 1000, "GB"},
+		{1000 * 1000 * 1000 * 1000, "TB"},
+		{1000 * 1000 * 1000 * 1000 * 1000, "PB"},
+	})
+}
+
 // The Go stdlib time.Duration is an int64 number of nanoseconds.
 func handle_stdlibTimeDuration(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
 	return handle_factor_with(area, rv, tag, label, []factor{
