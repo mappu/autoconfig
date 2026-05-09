@@ -112,6 +112,7 @@ type testCustomTypes struct {
 	Bytes          Bytes
 	MetricBytes    MetricBytes
 	Bitrate        Bitrate
+	Distance       Distance
 
 	H2                 Header        `ylabel:"Types by pointer"`
 	A_File_Ptr         *ExistingFile `yfilter:"Text files (*.txt);;All files (*)"`

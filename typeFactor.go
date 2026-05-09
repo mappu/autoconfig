@@ -158,6 +158,37 @@ func (Bitrate) Render(area *qt.QFormLayout, rv *reflect.Value, tag reflect.Struc
 	})
 }
 
+// Distance is an int64 number of microns.
+// The renderer supports both metric and imperial distance units.
+type Distance int64
+
+const (
+	Micron     Distance = 1
+	Millimeter Distance = 1000
+	Centimeter Distance = Millimeter * 10
+	Meter      Distance = Centimeter * 100
+	Kilometer  Distance = Meter * 1000
+
+	Inch = Micron * 25400
+	Foot = Inch * 12
+	Yard = Foot * 3
+	Mile = Foot * 5280
+)
+
+func (Distance) Render(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
+	return handle_factor_with(area, rv, tag, label, []factor{
+		{int64(Micron), "microns"},
+		{int64(Millimeter), "mm"},
+		{int64(Centimeter), "cm"},
+		{int64(Inch), "inches"},
+		{int64(Foot), "feet"},
+		{int64(Yard), "yards"},
+		{int64(Meter), "m"},
+		{int64(Kilometer), "km"},
+		{int64(Mile), "miles"},
+	})
+}
+
 // The Go stdlib time.Duration is an int64 number of nanoseconds.
 func handle_stdlibTimeDuration(area *qt.QFormLayout, rv *reflect.Value, tag reflect.StructTag, label string) SaveFunc {
 	return handle_factor_with(area, rv, tag, label, []factor{
