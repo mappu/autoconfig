@@ -62,10 +62,16 @@ Only public fields are supported. This is a limitation of the standard library `
 	- time.Time, time.Duration
 - Custom types
 	- AddressPort
+	- Bitrate
+	- Bytes
+	- Distance
 	- EnumList
+	- EnumString
 	- ExistingDirectory
 	- ExistingFile
+	- Factor
 	- Header
+	- MetricBytes
 	- MultilineString
 	- Password
 	- Any custom type that implements the `Renderer` interface
@@ -81,6 +87,7 @@ Add struct tags to individual fields to customize the rendering:
 |---------|------
 |`ylabel` |Override label. If not present, the default label is the struct field's name with underscores replaced by spaces.
 |`yenum`  |For "EnumList"; list of dropdown options, separated by double-semicolon (`;;`)
+|`yfactor`|For "Factor"; pairs of numeric factors, separated by double-semicolon (`;;`)
 |`yfilter`|For "ExistingFile"; filter to apply in popup dialog
 |`yicon`  |For "OneOf" and "TabGroup"; icon (either from theme, or with `:/` prefix for resource icon)
 |`yprefix`|For int, uint, float types; text to display as a prefix (e.g. "at least")
@@ -95,6 +102,12 @@ Implement these interfaces to customize the rendering:
 |`fmt.Stringer`  |May be used to format some types for display
 
 ## Changelog
+
+Unrelease vNext
+
+- Add `EnumString`
+- Add `Factor`
+- Add Factor-based implementations for `time.Duration`, `Bytes`, `MetricBytes`, `Bitrate` and `Distance`
 
 2026-01-16 v0.6.0
 
