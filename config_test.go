@@ -108,6 +108,7 @@ type testCustomTypes struct {
 	FooPassword    Password
 	EnumList       EnumList   `yenum:"First;;Second;;Third"`
 	EnumString     EnumString `yenum:"autoconfig_test_enumstring"`
+	CustomFactor   Factor     `yfactor:"1;;years;;10;;decades;;100;;centuries"`
 
 	H2                 Header        `ylabel:"Types by pointer"`
 	A_File_Ptr         *ExistingFile `yfilter:"Text files (*.txt);;All files (*)"`

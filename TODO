@@ -13,7 +13,6 @@
 	- colour picker
 	- date, time, date+time picker
 	- timezone picker
-	- multiplicative picker (for B/KB/GB, kbit/mbit, s/m/h/d/, ...)
 	- guid
 		- add external handling for popular GUID libraries?
 	- ipv4, ipv6
